@@ -29,7 +29,7 @@ Using fxTikTok is easy on Discord. Fix ugly and unresponsive embeds by sending y
 
 ### How does this work?
 
-When you send `s/i/n` in Discord, it modifies your most recent message. Specifically, it replaces the first occurrence of the second parameter (`i`) in the message with the third parameter (`n`).
+When you send `s/i/n` in Discord, it modifies your most recent message using the [sed](https://www.gnu.org/software/sed/manual/sed.html) format. Specifically, it replaces the first occurrence of the second parameter (`i`) in the message with the third parameter (`n`).
 
 |     Before     |     After      |
 | :------------: | :------------: |
