@@ -7,123 +7,122 @@ import { VideoResponse, ErrorResponse } from './templates'
 import generateAlternate from './util/generateAlternate'
 import { returnHTMLResponse } from './util/responseHelper'
 
-import { ItemStruct } from './types/Web'
-
 const app = new Hono()
 
 app.get('/test/:videoId', async (c) => {
-    const { videoId } = c.req.param()
-    const awemeId = await scrapeVideoData(videoId)
-    
-    if(awemeId instanceof Error) {
-        return new Response((awemeId as Error).message, { status: 500 })
-    }
+  const { videoId } = c.req.param()
+  const awemeId = await scrapeVideoData(videoId)
 
-    return new Response(JSON.stringify(awemeId), {
-        status: 200,
-        headers: {
-            'Content-Type': 'application/json; charset=utf-8'
-        }
-    })
+  if (awemeId instanceof Error) {
+    return new Response((awemeId as Error).message, { status: 500 })
+  }
+
+  return new Response(JSON.stringify(awemeId), {
+    status: 200,
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8'
+    }
+  })
 })
 
 app.get('/', (c) => {
-    return new Response('', {
-        status: 302,
-        headers: {
-            'Location': 'https://github.com/okdargy/fxtiktok'
-        }
-    })
+  return new Response('', {
+    status: 302,
+    headers: {
+      Location: 'https://github.com/okdargy/fxtiktok'
+    }
+  })
 })
 
 async function handleVideo(c: any): Promise<Response> {
-    const awemeIdPattern = /^\d{1,19}$/;
-    const BOT_REGEX = /bot|facebook|embed|got|firefox\/92|curl|wget|go-http|yahoo|generator|whatsapp|discord|preview|link|proxy|vkshare|images|analyzer|index|crawl|spider|python|cfnetwork|node/gi
+  const awemeIdPattern = /^\d{1,19}$/
+  const BOT_REGEX =
+    /bot|facebook|embed|got|firefox\/92|curl|wget|go-http|yahoo|generator|whatsapp|discord|preview|link|proxy|vkshare|images|analyzer|index|crawl|spider|python|cfnetwork|node/gi
 
-    const { videoId } = c.req.param()
-    let id = videoId;
+  const { videoId } = c.req.param()
+  let id = videoId
 
-    // If the user agent is a bot, redirect to the TikTok page
-    if (!BOT_REGEX.test(c.req.header('User-Agent') || '')) {
-        return new Response('', {
-            status: 302,
-            headers: {
-                'Location': 'https://www.tiktok.com' + `${awemeIdPattern.test(videoId) ? c.req.path : '/t/' + videoId}`
-            }
-        })
-    }
+  // If the user agent is a bot, redirect to the TikTok page
+  if (!BOT_REGEX.test(c.req.header('User-Agent') || '')) {
+    return new Response('', {
+      status: 302,
+      headers: {
+        Location: 'https://www.tiktok.com' + `${awemeIdPattern.test(videoId) ? c.req.path : '/t/' + videoId}`
+      }
+    })
+  }
 
-    // If the videoId doesn't match the awemeIdPattern, that means we have shortened TikTok link and we need to grab the awemeId
-    if (!awemeIdPattern.test(videoId)) {
-        try {
-            const awemeId = await grabAwemeId(videoId)
-            id = awemeId
-        } catch(e) {
-            const responseContent = await ErrorResponse((e as Error).message);
-            return returnHTMLResponse(responseContent, 201);
-        }
-    }
-
+  // If the videoId doesn't match the awemeIdPattern, that means we have shortened TikTok link and we need to grab the awemeId
+  if (!awemeIdPattern.test(videoId)) {
     try {
-        const videoInfo = await scrapeVideoData(id)
-
-        if (videoInfo instanceof Error) {
-            const responseContent = await ErrorResponse((videoInfo as Error).message);
-            return returnHTMLResponse(responseContent, 201);
-        }
-
-        const url = new URL(c.req.url);
-        if(url.hostname.includes('d.tnktok.com') || c.req.query('isDirect') === 'true') {
-                if(videoInfo.video.duration > 0) {
-                    return new Response('', {
-                        status: 302,
-                        headers: {
-                            'Location': 'https://fxtiktok-rewrite.dargy.workers.dev/generate/video/' + videoInfo.id
-                        }
-                    })
-                } else {
-                    return new Response('', {
-                        status: 302,
-                        headers: {
-                            'Location': 'https://fxtiktok-rewrite.dargy.workers.dev/generate/image/' + videoInfo.id
-                        }
-                    })
-                }
-        } else {
-            const responseContent = await VideoResponse(videoInfo);
-            return returnHTMLResponse(responseContent);
-        }
-    } catch(e) {
-        console.log(e);
-        const responseContent = await ErrorResponse((e as Error).message);
-        return returnHTMLResponse(responseContent, 201);
+      const awemeId = await grabAwemeId(videoId)
+      id = awemeId
+    } catch (e) {
+      const responseContent = await ErrorResponse((e as Error).message)
+      return returnHTMLResponse(responseContent, 201)
     }
+  }
+
+  try {
+    const videoInfo = await scrapeVideoData(id)
+
+    if (videoInfo instanceof Error) {
+      const responseContent = await ErrorResponse((videoInfo as Error).message)
+      return returnHTMLResponse(responseContent, 201)
+    }
+
+    const url = new URL(c.req.url)
+    if (url.hostname.includes('d.tnktok.com') || c.req.query('isDirect') === 'true') {
+      if (videoInfo.video.duration > 0) {
+        return new Response('', {
+          status: 302,
+          headers: {
+            Location: 'https://fxtiktok-rewrite.dargy.workers.dev/generate/video/' + videoInfo.id
+          }
+        })
+      } else {
+        return new Response('', {
+          status: 302,
+          headers: {
+            Location: 'https://fxtiktok-rewrite.dargy.workers.dev/generate/image/' + videoInfo.id
+          }
+        })
+      }
+    } else {
+      const responseContent = await VideoResponse(videoInfo)
+      return returnHTMLResponse(responseContent)
+    }
+  } catch (e) {
+    console.log(e)
+    const responseContent = await ErrorResponse((e as Error).message)
+    return returnHTMLResponse(responseContent, 201)
+  }
 }
 
 app.get('/generate/alternate', (c) => {
-    const content = JSON.stringify(generateAlternate(c));
-    return new Response(content, {
-        status: 200,
-        headers: {
-            'Content-Type': 'application/json; charset=utf-8',
-            'Cache-Control': 'public, max-age=3600'
-        }
-    })
+  const content = JSON.stringify(generateAlternate(c))
+  return new Response(content, {
+    status: 200,
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+      'Cache-Control': 'public, max-age=3600'
+    }
+  })
 })
 
 app.get(
-    '/generate/*',
-    cache({
-      cacheName: 'my-app',
-      cacheControl: 'max-age=3600',
-    })
-  )
+  '/generate/*',
+  cache({
+    cacheName: 'my-app',
+    cacheControl: 'max-age=3600'
+  })
+)
 
 app.get('/generate/video/:videoId', async (c) => {
-    const { videoId } = c.req.param()
+  const { videoId } = c.req.param()
 
-    try {
-        /*
+  try {
+    /*
         const data = await scrapeVideoData(videoId);
 
         if (!(data instanceof Error)) {
@@ -137,22 +136,23 @@ app.get('/generate/video/:videoId', async (c) => {
                 })
             }
         }
-        */
-        return c.redirect(`https://tikwm.com/video/media/play/${videoId}.mp4`);
-    } catch(e) {
-        return new Response((e as Error).message, { status: 500,
-            headers: {
-                'Cache-Control': 'no-cache, no-store, must-revalidate',
-            }
-        })
-    }
+    */
+    return c.redirect(`https://tikwm.com/video/media/play/${videoId}.mp4`)
+  } catch (e) {
+    return new Response((e as Error).message, {
+      status: 500,
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate'
+      }
+    })
+  }
 })
 
 app.get('/generate/image/:videoId', async (c) => {
-    const { videoId } = c.req.param()
+  const { videoId } = c.req.param()
 
-    try {
-        /*
+  try {
+    /*
         const data = await scrapeVideoData(videoId);
 
         if (!(data instanceof Error)) {
@@ -162,40 +162,41 @@ app.get('/generate/image/:videoId', async (c) => {
                 return new Response(JSON.stringify(data), { status: 200 })
             }
         }
-        */
-        return c.redirect(`https://tikwm.com/video/cover/${videoId}.webp`);
-    } catch(e) {
-        return new Response((e as Error).message, { status: 500,
-            headers: {
-                'Cache-Control': 'no-cache, no-store, must-revalidate',
-            }
-        })
-    }
+    */
+    return c.redirect(`https://tikwm.com/video/cover/${videoId}.webp`)
+  } catch (e) {
+    return new Response((e as Error).message, {
+      status: 500,
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate'
+      }
+    })
+  }
 })
 
 const routes = [
-    {
-        path: '/:videoId',
-        handler: handleVideo
-    },
-    {
-        path: '/*/video/:videoId',
-        handler: handleVideo
-    },
-    {
-        path: '/*/photo/:videoId',
-        handler: handleVideo
-    },
-    {
-        path: '/t/:videoId',
-        handler: handleVideo
-    }
+  {
+    path: '/:videoId',
+    handler: handleVideo
+  },
+  {
+    path: '/*/video/:videoId',
+    handler: handleVideo
+  },
+  {
+    path: '/*/photo/:videoId',
+    handler: handleVideo
+  },
+  {
+    path: '/t/:videoId',
+    handler: handleVideo
+  }
 ]
 
 // temp-fix: add trailing slash to all routes
-routes.forEach(route => {
-    app.get(route.path, route.handler)
-    app.get(route.path + '/', route.handler)
+routes.forEach((route) => {
+  app.get(route.path, route.handler)
+  app.get(route.path + '/', route.handler)
 })
 
 export default app

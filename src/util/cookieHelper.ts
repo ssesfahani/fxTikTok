@@ -1,30 +1,30 @@
-import { Cookie } from "set-cookie-parser";
+import { Cookie } from 'set-cookie-parser'
 
 export default class CookieHelper {
-    cookies: Cookie[];
+  cookies: Cookie[]
 
-    constructor(initatior: Cookie[]) {
-        this.cookies = initatior || [];
+  constructor(initatior: Cookie[]) {
+    this.cookies = initatior || []
+  }
+  setCookies(cookies: Cookie[]) {
+    Object.assign(this.cookies, cookies)
+  }
+  deleteCookies(cookies: Cookie[]) {
+    for (const cookie of cookies) {
+      const index = this.cookies.findIndex((c) => c.name === cookie.name)
+      if (index !== -1) {
+        this.cookies.splice(index, 1)
+      }
     }
-    setCookies(cookies: Cookie[]) {
-        Object.assign(this.cookies, cookies);
-    }
-    deleteCookies(cookies: Cookie[]) {
-        for (const cookie of cookies) {
-            const index = this.cookies.findIndex((c) => c.name === cookie.name);
-            if (index !== -1) {
-                this.cookies.splice(index, 1);
-            }
-        }
-    }
-    getUpdatingCookies() {
-        return this.cookies
-    }
-    getCookies() {
-        return Object.freeze({ ...this.cookies })
-    }
-    getCookiesAsString() {
-        /*
+  }
+  getUpdatingCookies() {
+    return this.cookies
+  }
+  getCookies() {
+    return Object.freeze({ ...this.cookies })
+  }
+  getCookiesAsString() {
+    /*
         this.cookies
         [                                                                                                                                                                       
   {                                                                                                                                                                             
@@ -41,9 +41,11 @@ export default class CookieHelper {
   }
 ]
         */
-        return this.cookies.map((cookie) => {
-            console.log(cookie)
-            return `${cookie.name}=${cookie.value}`
-        }).join("; ");
-    }               
+    return this.cookies
+      .map((cookie) => {
+        console.log(cookie)
+        return `${cookie.name}=${cookie.value}`
+      })
+      .join('; ')
+  }
 }
