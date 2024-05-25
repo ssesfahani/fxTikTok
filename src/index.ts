@@ -40,22 +40,22 @@ async function handleVideo(c: any): Promise<Response> {
     /bot|facebook|embed|got|firefox\/92|curl|wget|go-http|yahoo|generator|whatsapp|discord|preview|link|proxy|vkshare|images|analyzer|index|crawl|spider|python|cfnetwork|node/gi
 
   const { videoId } = c.req.param()
-  let id = videoId
+  let id = videoId.split('.')[0]
 
   // If the user agent is a bot, redirect to the TikTok page
   if (!BOT_REGEX.test(c.req.header('User-Agent') || '')) {
     return new Response('', {
       status: 302,
       headers: {
-        Location: 'https://www.tiktok.com' + `${awemeIdPattern.test(videoId) ? c.req.path : '/t/' + videoId}`
+        Location: 'https://www.tiktok.com' + `${awemeIdPattern.test(id) ? c.req.path : '/t/' + id}`
       }
     })
   }
 
   // If the videoId doesn't match the awemeIdPattern, that means we have shortened TikTok link and we need to grab the awemeId
-  if (!awemeIdPattern.test(videoId)) {
+  if (!awemeIdPattern.test(id)) {
     try {
-      const awemeId = await grabAwemeId(videoId)
+      const awemeId = await grabAwemeId(id)
       id = awemeId
     } catch (e) {
       const responseContent = await ErrorResponse((e as Error).message)
@@ -72,7 +72,13 @@ async function handleVideo(c: any): Promise<Response> {
     }
 
     const url = new URL(c.req.url)
-    if (url.hostname.includes('d.tnktok.com') || c.req.query('isDirect') === 'true') {
+    const extensions = ['mp4', 'png', 'jpg', 'jpeg', 'webp', 'webm']
+
+    if (
+      url.hostname.includes('d.tnktok.com') ||
+      c.req.query('isDirect') === 'true' ||
+      extensions.some((suffix) => c.req.path.endsWith(suffix))
+    ) {
       if (videoInfo.video.duration > 0) {
         return new Response('', {
           status: 302,
