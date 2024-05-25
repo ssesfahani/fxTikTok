@@ -2,6 +2,12 @@ name = "fxtiktok-rewrite"
 compatibility_date = "2023-01-01"
 main = "src/index.ts"
 
+vars = { WORKER_ENV = "production" }
+
+[env.local]
+# these will be used only when --env=local
+vars = { WORKER_ENV = "local" }
+
 # [vars]
 # MY_VARIABLE = "production_value"
 

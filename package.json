@@ -2,12 +2,14 @@
   "name": "fxtiktok",
   "version": "1.0.0",
   "scripts": {
-    "dev": "wrangler dev src/index.ts",
+    "dev": "wrangler dev src/index.ts --env=local",
     "build": "wrangler build src/index.ts",
     "deploy": "wrangler deploy --minify src/index.ts"
   },
   "dependencies": {
-    "hono": "^3.11.7"
+    "@types/set-cookie-parser": "^2.4.7",
+    "hono": "^3.11.7",
+    "set-cookie-parser": "^2.6.0"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20230914.0",

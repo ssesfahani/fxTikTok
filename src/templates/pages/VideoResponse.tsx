@@ -1,17 +1,15 @@
-import { AwemeList } from "../../types/Services";
-import MetaHelper from "../../util/MetaHelper";
+import MetaHelper from "../../util/metaHelper";
+import { ItemStruct } from "../../types/Web";
 
-export function VideoResponse(data: AwemeList): JSX.Element {
+export function VideoResponse(data: ItemStruct): JSX.Element {
   let videoUrl =
     "https://fxtiktok-rewrite.dargy.workers.dev/generate/video/" +
-    data.aweme_id;
+    data.id;
 
-  if (data.video.duration > 0) {
-    const awemeVideo =
-      data.video.play_addr.url_list.find((url) =>
-        url.includes("/aweme/v1/play"),
-      ) ||
-      data.video.bit_rate[0].play_addr.url_list.find((url) =>
+  // NOTE - This snippet was used to get a dynamic URL from the TikTok API but now we are mainly using web scraping to get the video data, which doesn't provide a dynamic URL
+  /*
+  if (data.video.duration > 0 && data.videos_addr) {
+    const awemeVideo = data.videos_addr.find((url) =>
         url.includes("/aweme/v1/play"),
       );
 
@@ -24,14 +22,16 @@ export function VideoResponse(data: AwemeList): JSX.Element {
       videoUrl = `https://${url.hostname}/aweme/v1/play/?video_id=${videoId}&file_id=${fileId}&item_id=${data.aweme_id}`;
     }
   }
+  */
 
+  console.log(data);
   return (
     <>
       {MetaHelper(
         [
           {
             name: "og:title",
-            content: `${data.author.nickname} (@${data.author.unique_id})`, // Nickname (@username)
+            content: `${data.author.nickname} (@${data.author.uniqueId})`, // Nickname (@username)
           },
           {
             name: "theme-color",
@@ -43,19 +43,19 @@ export function VideoResponse(data: AwemeList): JSX.Element {
           },
           {
             name: "twitter:site",
-            content: `@${data.author.unique_id}`, // @username
+            content: `@${data.author.uniqueId}`, // @username
           },
           {
             name: "twitter:creator",
-            content: `@${data.author.unique_id}`, // @username
+            content: `@${data.author.uniqueId}`, // @username
           },
           {
             name: "twitter:title",
-            content: `${data.author.nickname} (@${data.author.unique_id})`, // Nickname (@username)
+            content: `${data.author.nickname} (@${data.author.uniqueId})`, // Nickname (@username)
           },
           {
             name: "og:url",
-            content: data.share_url,
+            content: `https://www.tiktok.com/@${data.author.uniqueId}/video/${data.id}`,
           },
           {
             name: "og:description",
@@ -63,7 +63,7 @@ export function VideoResponse(data: AwemeList): JSX.Element {
           },
           {
             name: `og:${data.video.duration !== 0 ? "video" : "image"}`,
-            content: `${data.video.duration !== 0 ? videoUrl : "https://fxtiktok-rewrite.dargy.workers.dev/generate/image/" + data.aweme_id}`,
+            content: `${data.video.duration !== 0 ? videoUrl : "https://fxtiktok-rewrite.dargy.workers.dev/generate/image/" + data.id}`,
           },
           {
             name: "og:type",
@@ -75,19 +75,19 @@ export function VideoResponse(data: AwemeList): JSX.Element {
           },
           {
             name: `og:${data.video.duration !== 0 ? "video" : "image"}:width`,
-            content: `${data.video.duration !== 0 ? data.video.width : data.video.cover.width}`,
+            content: `${data.video.duration !== 0 ? data.video.width : data.imagePost.images[0].imageWidth}`,
           },
           {
             name: `og:${data.video.duration !== 0 ? "video" : "image"}:height`,
-            content: `${data.video.duration !== 0 ? data.video.height : data.video.cover.height}`,
+            content: `${data.video.duration !== 0 ? data.video.height : data.imagePost.images[0].imageHeight}`,
           },
         ],
         {
-          likes: data.statistics.digg_count,
-          comments: data.statistics.comment_count,
-          shares: data.statistics.share_count,
-          unique_id: data.author.unique_id,
-          images: data.image_post_info ? data.image_post_info.images.length : 0,
+          likes: data.stats.diggCount,
+          comments: data.stats.commentCount,
+          shares: data.stats.shareCount,
+          unique_id: data.author.uniqueId,
+          images: data.imagePost ? data.imagePost.images.length : 0,
         },
       )}
     </>

@@ -1,5 +1,5 @@
-import { AwemeList } from '../../types/Services';
-import MetaHelper from '../../util/MetaHelper';
+import { AwemeList } from '../../types/API';
+import MetaHelper from '../../util/metaHelper';
 
 export function ErrorResponse(error: string): JSX.Element {
     return (

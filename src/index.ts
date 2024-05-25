@@ -1,16 +1,19 @@
 import { Hono } from 'hono'
 import { cache } from 'hono/cache'
 
-import { grabAwemeId, getVideoInfo } from './services/tiktok'
+import { scrapeVideoData } from './services/tiktok'
+import { grabAwemeId } from './services/tiktok'
 import { VideoResponse, ErrorResponse } from './templates'
 import generateAlternate from './util/generateAlternate'
-import { returnHTMLResponse } from './util/ResponseHelper'
+import { returnHTMLResponse } from './util/responseHelper'
+
+import { ItemStruct } from './types/Web'
 
 const app = new Hono()
 
 app.get('/test/:videoId', async (c) => {
     const { videoId } = c.req.param()
-    const awemeId = await getVideoInfo(videoId)
+    const awemeId = await scrapeVideoData(videoId)
     
     if(awemeId instanceof Error) {
         return new Response((awemeId as Error).message, { status: 500 })
@@ -62,7 +65,7 @@ async function handleVideo(c: any): Promise<Response> {
     }
 
     try {
-        const videoInfo = await getVideoInfo(id)
+        const videoInfo = await scrapeVideoData(id)
 
         if (videoInfo instanceof Error) {
             const responseContent = await ErrorResponse((videoInfo as Error).message);
@@ -70,20 +73,19 @@ async function handleVideo(c: any): Promise<Response> {
         }
 
         const url = new URL(c.req.url);
-
         if(url.hostname.includes('d.tnktok.com') || c.req.query('isDirect') === 'true') {
                 if(videoInfo.video.duration > 0) {
                     return new Response('', {
                         status: 302,
                         headers: {
-                            'Location': 'https://fxtiktok-rewrite.dargy.workers.dev/generate/video/' + videoInfo.aweme_id
+                            'Location': 'https://fxtiktok-rewrite.dargy.workers.dev/generate/video/' + videoInfo.id
                         }
                     })
                 } else {
                     return new Response('', {
                         status: 302,
                         headers: {
-                            'Location': 'https://fxtiktok-rewrite.dargy.workers.dev/generate/image/' + videoInfo.aweme_id
+                            'Location': 'https://fxtiktok-rewrite.dargy.workers.dev/generate/image/' + videoInfo.id
                         }
                     })
                 }
@@ -92,6 +94,7 @@ async function handleVideo(c: any): Promise<Response> {
             return returnHTMLResponse(responseContent);
         }
     } catch(e) {
+        console.log(e);
         const responseContent = await ErrorResponse((e as Error).message);
         return returnHTMLResponse(responseContent, 201);
     }
@@ -118,20 +121,26 @@ app.get(
 
 app.get('/generate/video/:videoId', async (c) => {
     const { videoId } = c.req.param()
-    const data = await getVideoInfo(videoId);
 
-    if (data instanceof Error) {
-        return new Response((data as Error).message, { status: 500,
-            headers: {
-                'Cache-Control': 'no-cache, no-store, must-revalidate',
+    try {
+        /*
+        const data = await scrapeVideoData(videoId);
+
+        if (!(data instanceof Error)) {
+            if(data.video.playAddr) {
+                return c.redirect(data.video.playAddr)
+            } else {
+                return new Response('No video found', { status: 404,
+                    headers: {
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    }
+                })
             }
-        })
-    }
-
-    if(data.video.play_addr.url_list.length > 0) {
-        return c.redirect(data.video.play_addr.url_list[0])
-    } else {
-        return new Response('No video found', { status: 404,
+        }
+        */
+        return c.redirect(`https://tikwm.com/video/media/play/${videoId}.mp4`);
+    } catch(e) {
+        return new Response((e as Error).message, { status: 500,
             headers: {
                 'Cache-Control': 'no-cache, no-store, must-revalidate',
             }
@@ -141,16 +150,26 @@ app.get('/generate/video/:videoId', async (c) => {
 
 app.get('/generate/image/:videoId', async (c) => {
     const { videoId } = c.req.param()
-    const data = await getVideoInfo(videoId);
 
-    if (data instanceof Error) {
-        return new Response((data as Error).message, { status: 500 })
-    }
+    try {
+        /*
+        const data = await scrapeVideoData(videoId);
 
-    if(data.video.cover.url_list.length > 0) {
-        return c.redirect(data.video.cover.url_list[0])
-    } else {
-        return new Response(JSON.stringify(data), { status: 200 })
+        if (!(data instanceof Error)) {
+            if(data.imagePost.images.length > 0) {
+                return c.redirect(data.imagePost.images[0].imageURL.urlList[0])
+            } else {
+                return new Response(JSON.stringify(data), { status: 200 })
+            }
+        }
+        */
+        return c.redirect(`https://tikwm.com/video/cover/${videoId}.webp`);
+    } catch(e) {
+        return new Response((e as Error).message, { status: 500,
+            headers: {
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+            }
+        })
     }
 })
 
