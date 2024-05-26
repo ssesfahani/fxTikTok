@@ -1,0 +1,19 @@
+name: Run Unit Tests with Jest
+
+on:
+  pull_request:
+    branches:
+      - main
+      - master
+      - hono-rewrite
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Install dependencies
+        run: pnpm install
+      - name: Run Jest tests
+        run: pnpm test
