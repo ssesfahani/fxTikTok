@@ -22,7 +22,6 @@ export function VideoResponse(data: ItemStruct): JSX.Element {
   }
   */
 
-  console.log(data)
   return (
     <>
       {MetaHelper(

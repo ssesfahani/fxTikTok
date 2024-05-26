@@ -27,7 +27,7 @@ export async function getVideoInfo(awemeId: string): Promise<AwemeList | Error> 
       cacheTtlByStatus: { '200-299': 86400, 404: 1, '500-599': 0 }
     }
   })
-  const json: TikTokAPIResponse = await res.json()
+  const json = (await res.json()) as TikTokAPIResponse
   const videoInfo: AwemeList | undefined = json.aweme_list.find((aweme) => aweme.aweme_id === awemeId)
 
   if (videoInfo) {

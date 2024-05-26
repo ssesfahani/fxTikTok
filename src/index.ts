@@ -11,18 +11,24 @@ const app = new Hono()
 
 app.get('/test/:videoId', async (c) => {
   const { videoId } = c.req.param()
-  const awemeId = await scrapeVideoData(videoId)
 
-  if (awemeId instanceof Error) {
-    return new Response((awemeId as Error).message, { status: 500 })
+  try {
+    const videoData = await scrapeVideoData(videoId)
+
+    return new Response(JSON.stringify(videoData), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8'
+      }
+    })
+  } catch (e) {
+    return new Response((e as Error).message, {
+      status: 500,
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8'
+      }
+    })
   }
-
-  return new Response(JSON.stringify(awemeId), {
-    status: 200,
-    headers: {
-      'Content-Type': 'application/json; charset=utf-8'
-    }
-  })
 })
 
 app.get('/', (c) => {
@@ -59,7 +65,7 @@ async function handleVideo(c: any): Promise<Response> {
       id = awemeId
     } catch (e) {
       const responseContent = await ErrorResponse((e as Error).message)
-      return returnHTMLResponse(responseContent, 201)
+      return returnHTMLResponse(responseContent, 500)
     }
   }
 
@@ -68,7 +74,7 @@ async function handleVideo(c: any): Promise<Response> {
 
     if (videoInfo instanceof Error) {
       const responseContent = await ErrorResponse((videoInfo as Error).message)
-      return returnHTMLResponse(responseContent, 201)
+      return returnHTMLResponse(responseContent, 500)
     }
 
     const url = new URL(c.req.url)
@@ -99,9 +105,8 @@ async function handleVideo(c: any): Promise<Response> {
       return returnHTMLResponse(responseContent)
     }
   } catch (e) {
-    console.log(e)
     const responseContent = await ErrorResponse((e as Error).message)
-    return returnHTMLResponse(responseContent, 201)
+    return returnHTMLResponse(responseContent, 500)
   }
 }
 
@@ -116,21 +121,13 @@ app.get('/generate/alternate', (c) => {
   })
 })
 
-app.get(
-  '/generate/*',
-  cache({
-    cacheName: 'my-app',
-    cacheControl: 'max-age=3600'
-  })
-)
-
 app.get('/generate/video/:videoId', async (c) => {
   const { videoId } = c.req.param()
 
   try {
-    /*
-        const data = await scrapeVideoData(videoId);
+    const data = await scrapeVideoData(videoId)
 
+    /*
         if (!(data instanceof Error)) {
             if(data.video.playAddr) {
                 return c.redirect(data.video.playAddr)
@@ -143,6 +140,7 @@ app.get('/generate/video/:videoId', async (c) => {
             }
         }
     */
+
     return c.redirect(`https://tikwm.com/video/media/play/${videoId}.mp4`)
   } catch (e) {
     return new Response((e as Error).message, {
@@ -158,9 +156,9 @@ app.get('/generate/image/:videoId', async (c) => {
   const { videoId } = c.req.param()
 
   try {
-    /*
-        const data = await scrapeVideoData(videoId);
+    const data = await scrapeVideoData(videoId)
 
+    /*
         if (!(data instanceof Error)) {
             if(data.imagePost.images.length > 0) {
                 return c.redirect(data.imagePost.images[0].imageURL.urlList[0])
@@ -169,6 +167,7 @@ app.get('/generate/image/:videoId', async (c) => {
             }
         }
     */
+
     return c.redirect(`https://tikwm.com/video/cover/${videoId}.webp`)
   } catch (e) {
     return new Response((e as Error).message, {

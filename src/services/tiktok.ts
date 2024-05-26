@@ -20,8 +20,7 @@ export async function grabAwemeId(videoId: string): Promise<String | Error> {
 }
 
 export async function scrapeVideoData(awemeId: string, author?: string): Promise<ItemStruct | Error> {
-  console.log('before', cookie.getUpdatingCookies())
-  const res = await fetch(`https://www.tiktok.com/@${author || 'i'}"/video/${awemeId}`, {
+  const res = await fetch(`https://www.tiktok.com/@${author || 'i'}/video/${awemeId}`, {
     method: 'GET',
     headers: {
       Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
@@ -34,8 +33,6 @@ export async function scrapeVideoData(awemeId: string, author?: string): Promise
     }
   })
 
-  console.log('string', cookie.getCookiesAsString())
-  console.log(res.headers)
   let cookies = cookieParser(res.headers.get('set-cookie')!)
   cookie.setCookies(cookies)
 
@@ -47,18 +44,15 @@ export async function scrapeVideoData(awemeId: string, author?: string): Promise
       .split('</script>')[0]
     const json: WebJSONResponse = JSON.parse(resJson)
 
-    //console.log(Object.keys(json["__DEFAULT_SCOPE__"]));
     if (
       !json['__DEFAULT_SCOPE__']['webapp.video-detail'] ||
       json['__DEFAULT_SCOPE__']['webapp.video-detail'].statusCode == 10204
     )
       throw new Error('Could not find video data')
     const videoInfo = json['__DEFAULT_SCOPE__']['webapp.video-detail']['itemInfo']['itemStruct']
-    //console.log(videoInfo)
 
     return videoInfo
   } catch (err) {
-    console.log(err)
     throw new Error('Could not parse video info')
   }
 }
