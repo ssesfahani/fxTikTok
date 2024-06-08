@@ -68,13 +68,11 @@ export async function scrapeLiveData(author: string): Promise<LiveRoom | Error> 
   const html = await res.text()
 
   try {
-    const resJson = html
-    .split('<script id="SIGI_STATE" type="application/json">')[1]
-    .split('</script>')[0]
+    const resJson = html.split('<script id="SIGI_STATE" type="application/json">')[1].split('</script>')[0]
     const json: LiveWebJSONResponse = JSON.parse(resJson)
 
     if (!json['LiveRoom']) throw new Error('Could not find live data')
-    
+
     return json['LiveRoom']
   } catch (err) {
     throw new Error('Could not parse live data')

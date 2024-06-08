@@ -83,30 +83,30 @@ async function handleVideo(c: any): Promise<Response> {
 
   // If the user agent is a bot, redirect to the TikTok page
   if (!BOT_REGEX.test(c.req.header('User-Agent') || '')) {
-      const url = new URL(c.req.url)
-  
-      // Remove tracking parameters
-      url.search = ''
+    const url = new URL(c.req.url)
 
-      return new Response('', {
-        status: 302,
-        headers: {
-          Location: 'https://www.tiktok.com' + url.pathname
-        }
-      })
-    }
+    // Remove tracking parameters
+    url.search = ''
 
-    if(!awemeIdPattern.test(id)) {
-      const url = await grabAwemeId(id)
-      const match = url.pathname.match(awemeLinkPattern)
-
-      if (match) {
-        id = match[3]
-      } else {
-        const responseContent = await ErrorResponse('Invalid video ID')
-        return returnHTMLResponse(responseContent, 400)
+    return new Response('', {
+      status: 302,
+      headers: {
+        Location: 'https://www.tiktok.com' + url.pathname
       }
+    })
+  }
+
+  if (!awemeIdPattern.test(id)) {
+    const url = await grabAwemeId(id)
+    const match = url.pathname.match(awemeLinkPattern)
+
+    if (match) {
+      id = match[3]
+    } else {
+      const responseContent = await ErrorResponse('Invalid video ID')
+      return returnHTMLResponse(responseContent, 400)
     }
+  }
 
   try {
     const videoInfo = await scrapeVideoData(id)
@@ -150,7 +150,7 @@ async function handleVideo(c: any): Promise<Response> {
 }
 async function handleLive(c: any): Promise<Response> {
   const { author, videoId } = c.req.param()
-  let authorName = author;
+  let authorName = author
 
   // If the user agent is a bot, redirect to the TikTok page
   if (!BOT_REGEX.test(c.req.header('User-Agent') || '')) {
@@ -167,7 +167,7 @@ async function handleLive(c: any): Promise<Response> {
     })
   }
 
-  if(!author && !awemeIdPattern.test(videoId)) {
+  if (!author && !awemeIdPattern.test(videoId)) {
     const url = await grabAwemeId(videoId)
     const match = url.pathname.match(awemeLinkPattern)
 
