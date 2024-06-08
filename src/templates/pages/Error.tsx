@@ -15,7 +15,7 @@ export function ErrorResponse(error: string): JSX.Element {
         },
         {
           name: 'og:description',
-          content: 'An error occurred while trying to fetch the video. Please try again later.'
+          content: 'An error occurred while trying to fetch data. Please try again later.'
         },
         {
           name: 'og:site_name',

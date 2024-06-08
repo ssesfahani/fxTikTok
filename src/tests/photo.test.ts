@@ -30,7 +30,7 @@ describe('GET /@i/photo/:videoId', () => {
     })
 
     expect(res.status).toBe(500)
-    expect(await res.text()).toContain('An error occurred while trying to fetch the video. Please try again later.')
+    expect(await res.text()).toContain('An error occurred while trying to fetch data. Please try again later.')
   })
 })
 

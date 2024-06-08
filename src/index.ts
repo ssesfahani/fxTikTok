@@ -1,14 +1,16 @@
 import { Hono } from 'hono'
 import { cache } from 'hono/cache'
 
-import { scrapeVideoData } from './services/tiktok'
+import { scrapeLiveData, scrapeVideoData } from './services/tiktok'
 import { grabAwemeId } from './services/tiktok'
-import { VideoResponse, ErrorResponse } from './templates'
+import { VideoResponse, ErrorResponse, LiveResponse } from './templates'
 import generateAlternate from './util/generateAlternate'
 import { returnHTMLResponse } from './util/responseHelper'
 
 const app = new Hono()
 const awemeIdPattern = /^\d{1,19}$/
+const awemeLinkPattern = /\/@([\w\d_.]+)\/(video|photo|live)\/?(\d{19})?/
+
 const BOT_REGEX =
   /bot|facebook|embed|got|firefox\/92|curl|wget|go-http|yahoo|generator|whatsapp|discord|preview|link|proxy|vkshare|images|analyzer|index|crawl|spider|python|cfnetwork|node/gi
 
@@ -43,30 +45,68 @@ app.get('/', (c) => {
   })
 })
 
-async function handleVideo(c: any): Promise<Response> {
+async function handleShort(c: any): Promise<Response> {
   const { videoId } = c.req.param()
-  let id = videoId.split('.')[0]
+  let id = videoId.split('.')[0] // for .mp4, .webp, etc.
+
+  // First, we need to find where the vm link goes to
+  const res = await fetch('https://vm.tiktok.com/' + videoId)
+  const link = new URL(res.url)
+
+  // Clean any tracking parameters
+  link.search = ''
 
   // If the user agent is a bot, redirect to the TikTok page
   if (!BOT_REGEX.test(c.req.header('User-Agent') || '')) {
     return new Response('', {
       status: 302,
       headers: {
-        Location: 'https://www.tiktok.com' + `${awemeIdPattern.test(id) ? c.req.path : '/t/' + id}`
+        Location: 'https://www.tiktok.com' + link.pathname
       }
     })
   }
 
-  // If the videoId doesn't match the awemeIdPattern, that means we have shortened TikTok link and we need to grab the awemeId
-  if (!awemeIdPattern.test(id)) {
-    try {
-      const awemeId = await grabAwemeId(id)
-      id = awemeId
-    } catch (e) {
-      const responseContent = await ErrorResponse((e as Error).message)
-      return returnHTMLResponse(responseContent, 500)
-    }
+  // Now, we need to check if the video is a livestream or a photo/video
+  if (link.pathname.includes('/video') || link.pathname.includes('/photo')) {
+    return handleVideo(c)
+  } else if (link.pathname.includes('/live')) {
+    return handleLive(c)
+  } else {
+    const responseContent = await ErrorResponse('Invalid vm link')
+    return returnHTMLResponse(responseContent, 400)
   }
+}
+
+async function handleVideo(c: any): Promise<Response> {
+  const { videoId } = c.req.param()
+  let id = videoId.split('.')[0] // for .mp4, .webp, etc.
+
+  // If the user agent is a bot, redirect to the TikTok page
+  if (!BOT_REGEX.test(c.req.header('User-Agent') || '')) {
+      const url = new URL(c.req.url)
+  
+      // Remove tracking parameters
+      url.search = ''
+
+      return new Response('', {
+        status: 302,
+        headers: {
+          Location: 'https://www.tiktok.com' + url.pathname
+        }
+      })
+    }
+
+    if(!awemeIdPattern.test(id)) {
+      const url = await grabAwemeId(id)
+      const match = url.pathname.match(awemeLinkPattern)
+
+      if (match) {
+        id = match[3]
+      } else {
+        const responseContent = await ErrorResponse('Invalid video ID')
+        return returnHTMLResponse(responseContent, 400)
+      }
+    }
 
   try {
     const videoInfo = await scrapeVideoData(id)
@@ -103,6 +143,54 @@ async function handleVideo(c: any): Promise<Response> {
       const responseContent = await VideoResponse(videoInfo)
       return returnHTMLResponse(responseContent)
     }
+  } catch (e) {
+    const responseContent = await ErrorResponse((e as Error).message)
+    return returnHTMLResponse(responseContent, 500)
+  }
+}
+async function handleLive(c: any): Promise<Response> {
+  const { author, videoId } = c.req.param()
+  let authorName = author;
+
+  // If the user agent is a bot, redirect to the TikTok page
+  if (!BOT_REGEX.test(c.req.header('User-Agent') || '')) {
+    const url = new URL(c.req.url)
+
+    // Remove tracking parameters
+    url.search = ''
+
+    return new Response('', {
+      status: 302,
+      headers: {
+        Location: 'https://www.tiktok.com' + url.pathname
+      }
+    })
+  }
+
+  if(!author && !awemeIdPattern.test(videoId)) {
+    const url = await grabAwemeId(videoId)
+    const match = url.pathname.match(awemeLinkPattern)
+
+    if (match) {
+      authorName = match[1]
+    } else {
+      const responseContent = await ErrorResponse('Invalid live ID')
+      return returnHTMLResponse(responseContent, 400)
+    }
+  }
+
+  authorName = authorName.startsWith('@') ? authorName.substring(1) : authorName
+
+  try {
+    const liveData = await scrapeLiveData(authorName)
+
+    if (liveData instanceof Error) {
+      const responseContent = await ErrorResponse((liveData as Error).message)
+      return returnHTMLResponse(responseContent, 500)
+    }
+
+    const responseContent = await LiveResponse(liveData)
+    return returnHTMLResponse(responseContent)
   } catch (e) {
     const responseContent = await ErrorResponse((e as Error).message)
     return returnHTMLResponse(responseContent, 500)
@@ -209,7 +297,11 @@ app.get('/generate/image/:videoId/:imageCount', async (c) => {
 const routes = [
   {
     path: '/:videoId',
-    handler: handleVideo
+    handler: handleShort
+  },
+  {
+    path: '/t/:videoId',
+    handler: handleShort
   },
   {
     path: '/*/video/:videoId',
@@ -220,8 +312,8 @@ const routes = [
     handler: handleVideo
   },
   {
-    path: '/t/:videoId',
-    handler: handleVideo
+    path: '/:author/live',
+    handler: handleLive
   }
 ]
 

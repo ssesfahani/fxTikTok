@@ -4,13 +4,17 @@ export default function MetaHelper(
     content: string | null
   }[],
   alternate?: {
-    likes: number
-    comments: number
-    shares: number
-    unique_id: string
-    images: number
+    [key: string]: string | number
   }
 ): JSX.Element {
+  let alternateUrl = new URL('https://fxtiktok-rewrite.dargy.workers.dev/generate/alternate')
+
+  if (alternate) {
+    for (const key in alternate) {
+      alternateUrl.searchParams.set(key, encodeURIComponent(alternate[key].toString()))
+    }
+  }
+
   return (
     <html lang='en'>
       <head>
@@ -18,7 +22,7 @@ export default function MetaHelper(
         {alternate ? (
           <link
             rel='alternate'
-            href={`https://fxtiktok-rewrite.dargy.workers.dev/generate/alternate?likes=${alternate.likes}&comments=${alternate.comments}&shares=${alternate.shares}&unique_id=${encodeURIComponent(alternate.unique_id)}${alternate.images > 0 ? '&images=' + alternate.images : ''}`}
+            href={alternateUrl.toString()}
             type='application/json+oembed'
           />
         ) : null}
