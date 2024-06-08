@@ -19,13 +19,7 @@ export default function MetaHelper(
     <html lang='en'>
       <head>
         {tags.map((tag) => (tag.content ? <meta property={tag.name} content={tag.content} /> : null))}
-        {alternate ? (
-          <link
-            rel='alternate'
-            href={alternateUrl.toString()}
-            type='application/json+oembed'
-          />
-        ) : null}
+        {alternate ? <link rel='alternate' href={alternateUrl.toString()} type='application/json+oembed' /> : null}
       </head>
     </html>
   )

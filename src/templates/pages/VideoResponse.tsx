@@ -24,7 +24,7 @@ export function VideoResponse(data: ItemStruct): JSX.Element {
 
   let videoMeta: { name: string; content: string }[] = []
 
-  if(data.video.duration !== 0) {
+  if (data.video.duration !== 0) {
     videoMeta = [
       {
         name: 'og:video',
@@ -58,28 +58,28 @@ export function VideoResponse(data: ItemStruct): JSX.Element {
       videoMeta = [
         ...videoMeta,
         {
-          name: "og:image",
+          name: 'og:image',
           content: data.imagePost.images[i].imageURL.urlList[0]
         },
         {
-          name: "og:image:type",
-          content: "image/jpeg"
+          name: 'og:image:type',
+          content: 'image/jpeg'
         },
         {
-          name: "og:image:width",
-          content: "auto"
+          name: 'og:image:width',
+          content: 'auto'
         },
         {
-          name: "og:image:height",
-          content: "auto"
+          name: 'og:image:height',
+          content: 'auto'
         },
         {
-          name: "og:type",
-          content: "image.other"
+          name: 'og:type',
+          content: 'image.other'
         },
         {
-          name: "twitter:card",
-          content: "summary_large_image"
+          name: 'twitter:card',
+          content: 'summary_large_image'
         }
       ]
     }
