@@ -1,5 +1,6 @@
 import MetaHelper from '../../util/metaHelper'
 import { ItemStruct } from '../../types/Web'
+import { formatNumber } from '../../util/format'
 
 export function VideoResponse(data: ItemStruct): JSX.Element {
   let videoUrl = 'https://fxtiktok-rewrite.dargy.workers.dev/generate/video/' + data.id
@@ -85,13 +86,22 @@ export function VideoResponse(data: ItemStruct): JSX.Element {
     }
   }
 
+  let title = ''
+
+  title += `❤️ ${formatNumber(data.stats.diggCount.toString())} `
+  title += `💬 ${formatNumber(data.stats.commentCount.toString())}  `
+  title += `🔁 ${data.stats.shareCount.toString()}  `
+  if (data.imagePost) {
+    title += `🖼️ ${data.imagePost.images.length.toString()} `
+  }
+
   return (
     <>
       {MetaHelper(
         [
           {
             name: 'og:title',
-            content: `${data.author.nickname} (@${data.author.uniqueId})` // Nickname (@username)
+            content: title.trim()
           },
           {
             name: 'theme-color',
@@ -120,11 +130,8 @@ export function VideoResponse(data: ItemStruct): JSX.Element {
           ...videoMeta
         ],
         {
-          likes: data.stats.diggCount,
-          comments: data.stats.commentCount,
-          shares: data.stats.shareCount,
           unique_id: data.author.uniqueId,
-          images: data.imagePost ? data.imagePost.images.length : 0
+          nickname: data.author.nickname
         }
       )}
     </>
