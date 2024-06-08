@@ -13,9 +13,9 @@ Embed TikTok videos and slideshows on Discord with just `s/i/n`
 | :--------------------------------------------------------------------------------------------------------------------------------------------: |
 |                                           Comparing `tiktok.com` vs. `tnktok.com` embeds on Discord                                            |
 
-| <img src="https://raw.githubusercontent.com/okdargy/fxTikTok/master/.github/readme/slideshow.png" height="40%" width="40%" alt="Slideshow Preview" /> |
-| :---------------------------------------------------------------------------------------------------------------------------------------------------: |
-|                                                                   Slideshow embeds                                                                    |
+| <img src="https://raw.githubusercontent.com/okdargy/fxTikTok/master/.github/readme/slideshow.png" alt="Slideshow Preview" /> |
+| :--------------------------------------------------------------------------------------------------------------------------: |
+|                                                       Slideshow embeds                                                       |
 
 | <img src="https://raw.githubusercontent.com/okdargy/fxTikTok/master/.github/readme/direct.png" alt="Direct Preview" /> |
 | :--------------------------------------------------------------------------------------------------------------------: |
