@@ -22,6 +22,69 @@ export function VideoResponse(data: ItemStruct): JSX.Element {
   }
   */
 
+  let videoMeta: { name: string; content: string }[] = []
+
+  if (data.video.duration !== 0) {
+    videoMeta = [
+      {
+        name: 'og:video',
+        content: videoUrl
+      },
+      {
+        name: 'og:video:type',
+        content: 'video/mp4'
+      },
+      {
+        name: 'og:video:width',
+        content: data.video.width.toString()
+      },
+      {
+        name: 'og:video:height',
+        content: data.video.height.toString()
+      },
+      {
+        name: 'og:type',
+        content: 'video'
+      },
+      {
+        name: 'twitter:card',
+        content: 'player'
+      }
+    ]
+  } else {
+    const numberOfImages = data.imagePost.images.length > 4 ? 4 : data.imagePost.images.length
+
+    for (let i = 0; i < numberOfImages; i++) {
+      videoMeta = [
+        ...videoMeta,
+        {
+          name: 'og:image',
+          content: data.imagePost.images[i].imageURL.urlList[0]
+        },
+        {
+          name: 'og:image:type',
+          content: 'image/jpeg'
+        },
+        {
+          name: 'og:image:width',
+          content: 'auto'
+        },
+        {
+          name: 'og:image:height',
+          content: 'auto'
+        },
+        {
+          name: 'og:type',
+          content: 'image.other'
+        },
+        {
+          name: 'twitter:card',
+          content: 'summary_large_image'
+        }
+      ]
+    }
+  }
+
   return (
     <>
       {MetaHelper(
@@ -33,10 +96,6 @@ export function VideoResponse(data: ItemStruct): JSX.Element {
           {
             name: 'theme-color',
             content: '#ff0050' // TikTok's theme color
-          },
-          {
-            name: 'twitter:card',
-            content: `${data.video.duration !== 0 ? 'player' : 'summary_large_image'}`
           },
           {
             name: 'twitter:site',
@@ -56,28 +115,9 @@ export function VideoResponse(data: ItemStruct): JSX.Element {
           },
           {
             name: 'og:description',
-            content: data.video.duration !== 0 ? data.desc : null
+            content: data.desc
           },
-          {
-            name: `og:${data.video.duration !== 0 ? 'video' : 'image'}`,
-            content: `${data.video.duration !== 0 ? videoUrl : 'https://fxtiktok-rewrite.dargy.workers.dev/generate/image/' + data.id}`
-          },
-          {
-            name: 'og:type',
-            content: `${data.video.duration !== 0 ? 'video.other' : 'image.other'}`
-          },
-          {
-            name: `og:${data.video.duration !== 0 ? 'video' : 'image'}:type`,
-            content: `${data.video.duration !== 0 ? 'video/mp4' : 'image/jpeg'}`
-          },
-          {
-            name: `og:${data.video.duration !== 0 ? 'video' : 'image'}:width`,
-            content: `${data.video.duration !== 0 ? data.video.width : data.imagePost.images[0].imageWidth}`
-          },
-          {
-            name: `og:${data.video.duration !== 0 ? 'video' : 'image'}:height`,
-            content: `${data.video.duration !== 0 ? data.video.height : data.imagePost.images[0].imageHeight}`
-          }
+          ...videoMeta
         ],
         {
           likes: data.stats.diggCount,

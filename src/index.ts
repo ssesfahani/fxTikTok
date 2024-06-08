@@ -8,6 +8,9 @@ import generateAlternate from './util/generateAlternate'
 import { returnHTMLResponse } from './util/responseHelper'
 
 const app = new Hono()
+const awemeIdPattern = /^\d{1,19}$/
+const BOT_REGEX =
+  /bot|facebook|embed|got|firefox\/92|curl|wget|go-http|yahoo|generator|whatsapp|discord|preview|link|proxy|vkshare|images|analyzer|index|crawl|spider|python|cfnetwork|node/gi
 
 app.get('/test/:videoId', async (c) => {
   const { videoId } = c.req.param()
@@ -41,10 +44,6 @@ app.get('/', (c) => {
 })
 
 async function handleVideo(c: any): Promise<Response> {
-  const awemeIdPattern = /^\d{1,19}$/
-  const BOT_REGEX =
-    /bot|facebook|embed|got|firefox\/92|curl|wget|go-http|yahoo|generator|whatsapp|discord|preview|link|proxy|vkshare|images|analyzer|index|crawl|spider|python|cfnetwork|node/gi
-
   const { videoId } = c.req.param()
   let id = videoId.split('.')[0]
 
@@ -155,20 +154,48 @@ app.get('/generate/video/:videoId', async (c) => {
 app.get('/generate/image/:videoId', async (c) => {
   const { videoId } = c.req.param()
 
+  if (!videoId) return new Response('Missing video ID', { status: 400 })
+  if (!awemeIdPattern.test(videoId)) return new Response('Invalid video ID', { status: 400 })
+
   try {
     const data = await scrapeVideoData(videoId)
 
-    /*
-        if (!(data instanceof Error)) {
-            if(data.imagePost.images.length > 0) {
-                return c.redirect(data.imagePost.images[0].imageURL.urlList[0])
-            } else {
-                return new Response(JSON.stringify(data), { status: 200 })
-            }
-        }
-    */
-
     return c.redirect(`https://tikwm.com/video/cover/${videoId}.webp`)
+  } catch (e) {
+    return new Response((e as Error).message, {
+      status: 500,
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate'
+      }
+    })
+  }
+})
+
+app.get('/generate/image/:videoId/:imageCount', async (c) => {
+  const { videoId, imageCount } = c.req.param()
+
+  if (!videoId) return new Response('Missing video ID', { status: 400 })
+  if (!awemeIdPattern.test(videoId)) return new Response('Invalid video ID', { status: 400 })
+
+  if (isNaN(Number(imageCount)) || parseInt(imageCount) < 1) return new Response('Invalid image count', { status: 400 })
+  const imageIndex = parseInt(imageCount) - 1 // 0-indexed
+
+  try {
+    const data = await scrapeVideoData(videoId)
+
+    const images = await fetch('https://tikwm.com/api/', {
+      headers: {
+        Accept: 'application/json, text/javascript, */*; q=0.01',
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+      },
+      body: 'url=' + videoId + '&count=12&cursor=0&web=1&hd=1',
+      method: 'POST'
+    })
+
+    const imageJson = (await images.json()) as { data: { images: string[] } }
+    if (!imageJson.data.images[imageIndex]) return new Response('Image not found', { status: 404 })
+
+    return c.redirect(imageJson.data.images[imageIndex])
   } catch (e) {
     return new Response((e as Error).message, {
       status: 500,
