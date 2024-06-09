@@ -17,6 +17,10 @@ Embed TikTok videos and slideshows on Discord with just `s/i/n`
 | :--------------------------------------------------------------------------------------------------------------------------: |
 |                                                       Slideshow embeds                                                       |
 
+| <img src="https://raw.githubusercontent.com/okdargy/fxTikTok/master/.github/readme/live.png" alt="Live Preview" /> |
+| :--------------------------------------------------------------------------------------------------------------------------: |
+|                                                       Live video embeds                                                       |
+
 | <img src="https://raw.githubusercontent.com/okdargy/fxTikTok/master/.github/readme/direct.png" alt="Direct Preview" /> |
 | :--------------------------------------------------------------------------------------------------------------------: |
 |                                               Direct image/video support                                               |
