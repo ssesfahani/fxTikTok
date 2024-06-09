@@ -14,7 +14,7 @@ export default function generateAlternate(c: Context): {
   return {
     version: '1.0',
     type: 'link',
-    author_name: `${nickname} (@${unique_id})`,
+    author_name: `${decodeURIComponent(nickname)} (@${decodeURIComponent(unique_id)})`,
     author_url: `https://www.tiktok.com/${unique_id ? '@' + unique_id : ''}`,
     provider_name: 'fxTikTok - Embed with s/i/n',
     provider_url: 'https://github.com/okdargy/fxTikTok',
