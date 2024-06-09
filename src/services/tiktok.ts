@@ -55,10 +55,6 @@ export async function scrapeLiveData(author: string): Promise<LiveRoom | Error> 
       Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
       'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:126.0) Gecko/20100101 Firefox/126.0',
       Cookie: cookie.getCookiesAsString()
-    },
-    cf: {
-      cacheEverything: true,
-      cacheTtlByStatus: { '200-299': 86400, 404: 1, '500-599': 0 }
     }
   })
 

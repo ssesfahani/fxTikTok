@@ -6,7 +6,14 @@ export function LiveResponse(data: LiveRoom): JSX.Element {
   let title = ''
 
   title += `👀 ${formatNumber(String(data.liveRoomUserInfo.liveRoom.liveRoomStats.userCount))} `
-  title += `🕒 ${formatTime(data.liveRoomUserInfo.liveRoom.startTime)} `
+
+  console.log(data.liveRoomUserInfo.liveRoom.status)
+  if(data.liveRoomUserInfo.liveRoom.status !== 4) { // live has NOT ended
+    title += `🔴 LIVE `
+    title += `🕒 ${formatTime(data.liveRoomUserInfo.liveRoom.startTime)} `
+  } else {
+    title += `⌛ ENDED `
+  }
 
   return (
     <>
@@ -43,6 +50,18 @@ export function LiveResponse(data: LiveRoom): JSX.Element {
           {
             name: 'og:image',
             content: data.liveRoomUserInfo.user.avatarLarger
+          },
+          {
+            name: 'og:image:type',
+            content: 'image/jpeg'
+          },
+          {
+            name: 'og:type',
+            content: 'image.other'
+          },
+          {
+            name: 'twitter:card',
+            content: 'summary_large_image'
           }
         ],
         {
