@@ -50,7 +50,7 @@ async function handleShort(c: any): Promise<Response> {
   let id = videoId.split('.')[0] // for .mp4, .webp, etc.
 
   // First, we need to find where the vm link goes to
-  const res = await fetch('https://vm.tiktok.com/' + videoId)
+  const res = await fetch('https://vm.tiktok.com/' + id)
   const link = new URL(res.url)
 
   // Clean any tracking parameters
@@ -214,6 +214,7 @@ app.get('/generate/video/:videoId', async (c) => {
   try {
     const data = await scrapeVideoData(videoId)
 
+
     /*
         if (!(data instanceof Error)) {
             if(data.video.playAddr) {
@@ -248,7 +249,11 @@ app.get('/generate/image/:videoId', async (c) => {
   try {
     const data = await scrapeVideoData(videoId)
 
-    return c.redirect(`https://tikwm.com/video/cover/${videoId}.webp`)
+    if ('imagePost' in data && data.imagePost.images.length > 0) {
+      return c.redirect(data.imagePost.images[0].imageURL.urlList[0]);
+    } else {
+      throw new Error('Image not found');
+    }
   } catch (e) {
     return new Response((e as Error).message, {
       status: 500,

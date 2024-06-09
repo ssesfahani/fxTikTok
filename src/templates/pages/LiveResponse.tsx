@@ -7,7 +7,6 @@ export function LiveResponse(data: LiveRoom): JSX.Element {
 
   title += `👀 ${formatNumber(String(data.liveRoomUserInfo.liveRoom.liveRoomStats.userCount))} `
 
-  console.log(data.liveRoomUserInfo.liveRoom.status)
   if(data.liveRoomUserInfo.liveRoom.status !== 4) { // live has NOT ended
     title += `🔴 LIVE `
     title += `🕒 ${formatTime(data.liveRoomUserInfo.liveRoom.startTime)} `
