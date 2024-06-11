@@ -90,7 +90,7 @@ export function VideoResponse(data: ItemStruct): JSX.Element {
 
   title += `❤️ ${formatNumber(data.stats.diggCount.toString())} `
   title += `💬 ${formatNumber(data.stats.commentCount.toString())}  `
-  title += `🔁 ${data.stats.shareCount.toString()}  `
+  title += `🔁 ${formatNumber(data.stats.shareCount.toString())}  `
   if (data.imagePost) {
     title += `🖼️ ${data.imagePost.images.length.toString()} `
   }
