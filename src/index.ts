@@ -242,15 +242,17 @@ app.get('/generate/video/:videoId', async (c) => {
 
 app.get('/generate/image/:videoId', async (c) => {
   const { videoId } = c.req.param()
+  const index = c.req.query('index') || 0
 
   if (!videoId) return new Response('Missing video ID', { status: 400 })
   if (!awemeIdPattern.test(videoId)) return new Response('Invalid video ID', { status: 400 })
+  if (isNaN(Number(index))) return new Response('Invalid image index', { status: 400 })
 
   try {
     const data = await scrapeVideoData(videoId)
 
-    if ('imagePost' in data && data.imagePost.images.length > 0) {
-      return c.redirect(data.imagePost.images[0].imageURL.urlList[0]);
+    if ('imagePost' in data && data.imagePost.images.length > 0 && +index < data.imagePost.images.length) {
+      return c.redirect(data.imagePost.images[+index].imageURL.urlList[0]);
     } else {
       throw new Error('Image not found');
     }

@@ -60,7 +60,7 @@ export function VideoResponse(data: ItemStruct): JSX.Element {
         ...videoMeta,
         {
           name: 'og:image',
-          content: data.imagePost.images[i].imageURL.urlList[0]
+          content: "https://fxtiktok-rewrite.dargy.workers.dev/generate/image/" + data.id + "?index=" + i
         },
         {
           name: 'og:image:type',
