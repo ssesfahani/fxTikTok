@@ -48,3 +48,26 @@ Don't want all that statistic clutter on your embed and only want the video or i
 | **www**.t**i**ktok.com | **d**.t**n**ktok.com |
 
 > Alternatively, you can also set `isDirect` to true thru the URL query by adding `?isDirect=true` at the end of your URL
+
+### Why use tnktok.com?
+
+We check all the boxes for being one of the best TikTok embedding services with many features that others don't have. Here's a table comparing our service, tnktok.com, with the other TikTok embedding services as well as how TikTok's default embeds.
+
+|                                        	| [tnktok.com](https://www.tnktok.com)              	| Default TikTok 	| [tiktxk.com](https://tiktxk.com) 	| [vxtiktok.com](https://vxtiktok.com)                                         	| [tfxktok.com](https://tfxktok.com) 	|
+|----------------------------------------	|---------------------------------------------------	|----------------	|---------------------------------	|------------------------------------------------------------------------------	|------------------------------------	|
+| Embed playable videos                  	| ☑️                                                 	| ❌              	| ❔                               	| ☑️                                                                            	| ☑️                                  	|
+| Embed multi-image slideshows           	| ☑️                                                 	| ❌              	| ❔                               	| [❌](https://github.com/dylanpdx/vxtiktok/issues/142#issuecomment-2128030983) 	| ☑️                                  	|
+| Embed lives                            	| ☑️                                                 	| ➖              	| ❌                               	| ❌                                                                            	| ☑️                                  	|
+| Open source                            	| ☑️                                                 	| ❌              	| ☑️                               	| ☑️                                                                            	| ❌                                  	|
+| Supports direct embeds                 	| [➖](https://github.com/okdargy/fxTikTok/issues/9) 	| ❌              	| ❌                               	| ❌                                                                            	| ❌                                  	|
+| Shows like, shares, comments           	| ☑️                                                 	| ➖              	| ➖                               	| ☑️                                                                            	| ☑️                                  	|
+| Removes tracking for redirects         	| ☑️                                                 	| ❌              	| ☑️                               	| ☑️                                                                            	| ☑️                                  	|
+| Support for multi-continent short URLs 	| [☑️](https://github.com/okdargy/fxTikTok/issues/5) 	| ☑️              	| ☑️                               	| ☑️                                                                            	| ❌                                  	|
+| Last commit                            	| [![][tnk]][tnkc]                                  	| N/A            	| [![][txk]][txkc]                	| [![][vxt]][vxtc]                                                             	| N/A                                	|
+
+[tnk]: https://img.shields.io/github/last-commit/okdargy/fxTikTok?label
+[tnkc]: https://github.com/okdargy/fxTikTok/commits
+[txk]: https://img.shields.io/github/last-commit/Britmoji/tiktxk?label
+[txkc]: https://github.com/Britmoji/tiktxk/commits
+[vxt]: https://img.shields.io/github/last-commit/dylanpdx/vxtiktok?label
+[vxtc]: https://github.com/dylanpdx/vxtiktok/commits
