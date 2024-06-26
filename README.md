@@ -51,7 +51,7 @@ Don't want all that statistic clutter on your embed and only want the video or i
 
 ### Why use tnktok.com?
 
-We check all the boxes for being one of the best TikTok embedding services with many features that others don't have. Here's a table comparing our service, tnktok.com, with the other TikTok embedding services as well as how TikTok's default embeds.
+We check all the boxes for being one of the best TikTok embedding services with many features that others don't have. Here's a table comparing our service, tnktok.com, with the other TikTok embedding services as well as TikTok's default embeds.
 
 |                                        	| [tnktok.com](https://www.tnktok.com)              	| Default TikTok 	| [tiktxk.com](https://tiktxk.com) 	| [vxtiktok.com](https://vxtiktok.com)                                         	| [tfxktok.com](https://tfxktok.com) 	|
 |----------------------------------------	|---------------------------------------------------	|----------------	|---------------------------------	|------------------------------------------------------------------------------	|------------------------------------	|
