@@ -214,7 +214,6 @@ app.get('/generate/video/:videoId', async (c) => {
   try {
     const data = await scrapeVideoData(videoId)
 
-
     /*
         if (!(data instanceof Error)) {
             if(data.video.playAddr) {
@@ -252,9 +251,9 @@ app.get('/generate/image/:videoId', async (c) => {
     const data = await scrapeVideoData(videoId)
 
     if ('imagePost' in data && data.imagePost.images.length > 0 && +index < data.imagePost.images.length) {
-      return c.redirect(data.imagePost.images[+index].imageURL.urlList[0]);
+      return c.redirect(data.imagePost.images[+index].imageURL.urlList[0])
     } else {
-      throw new Error('Image not found');
+      throw new Error('Image not found')
     }
   } catch (e) {
     return new Response((e as Error).message, {
@@ -291,6 +290,32 @@ app.get('/generate/image/:videoId/:imageCount', async (c) => {
     if (!imageJson.data.images[imageIndex]) return new Response('Image not found', { status: 404 })
 
     return c.redirect(imageJson.data.images[imageIndex])
+  } catch (e) {
+    return new Response((e as Error).message, {
+      status: 500,
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate'
+      }
+    })
+  }
+})
+
+app.get('/generate/livePic/:author', async (c) => {
+  const { author } = c.req.param()
+
+  try {
+    const data = await scrapeLiveData(author)
+
+    if (data instanceof Error) {
+      return new Response((data as Error).message, {
+        status: 500,
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate'
+        }
+      })
+    }
+
+    return c.redirect(data.liveRoomUserInfo.user.avatarLarger)
   } catch (e) {
     return new Response((e as Error).message, {
       status: 500,

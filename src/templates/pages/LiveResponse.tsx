@@ -5,10 +5,10 @@ import { formatNumber, formatTime } from '@/util/format'
 export function LiveResponse(data: LiveRoom): JSX.Element {
   let title = ''
 
-  title += `👀 ${formatNumber(String(data.liveRoomUserInfo.liveRoom.liveRoomStats.userCount))} `
+  title += `👀 ${formatNumber(String(data.liveRoomUserInfo.liveRoom.liveRoomStats.userCount))}  `
 
-  if(data.liveRoomUserInfo.liveRoom.status !== 4) { // live has NOT ended
-    title += `🔴 LIVE `
+  if (data.liveRoomUserInfo.liveRoom.status !== 4) {
+    // live has NOT ended
     title += `🕒 ${formatTime(data.liveRoomUserInfo.liveRoom.startTime)} `
   } else {
     title += `⌛ ENDED `
@@ -48,7 +48,8 @@ export function LiveResponse(data: LiveRoom): JSX.Element {
           },
           {
             name: 'og:image',
-            content: data.liveRoomUserInfo.user.avatarLarger
+            content:
+              'https://fxtiktok-rewrite.dargy.workers.dev/generate/livePic/' + data.liveRoomUserInfo.user.uniqueId
           },
           {
             name: 'og:image:type',
