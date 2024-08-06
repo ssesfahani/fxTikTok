@@ -210,25 +210,28 @@ app.get('/generate/alternate', (c) => {
 
 app.get('/generate/video/:videoId', async (c) => {
   const { videoId } = c.req.param()
+  const forceLow = c.req.query('h264') === 'true' || c.req.query('encoder') === 'h264' || c.req.query('quality') === 'h264'
 
   try {
+    // To ensure the video is valid, decrease load on TikWM by checking the video data first
     const data = await scrapeVideoData(videoId)
 
-    /*
-        if (!(data instanceof Error)) {
-            if(data.video.playAddr) {
-                return c.redirect(data.video.playAddr)
-            } else {
-                return new Response('No video found', { status: 404,
-                    headers: {
-                        'Cache-Control': 'no-cache, no-store, must-revalidate',
-                    }
-                })
-            }
+    if (data instanceof Error) {
+      return new Response((data as Error).message, {
+        status: 500,
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate'
         }
-    */
+      })
+    }
 
-    return c.redirect(`https://tikwm.com/video/media/play/${videoId}.mp4`)
+    const highAvailable = data.video.bitrateInfo.find((bitrate) => bitrate.CodecType.includes('h265'))
+
+    if (highAvailable && !forceLow) {
+      return c.redirect(`https://tikwm.com/video/media/hdplay/${videoId}.mp4`)
+    } else {
+      return c.redirect(`https://tikwm.com/video/media/play/${videoId}.mp4`)
+    }
   } catch (e) {
     return new Response((e as Error).message, {
       status: 500,

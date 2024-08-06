@@ -5,6 +5,7 @@
     "dev": "wrangler dev src/index.ts --env=local",
     "build": "wrangler build src/index.ts",
     "deploy": "wrangler deploy --minify src/index.ts",
+    "deploy:staging": "wrangler deploy --env=staging --minify src/index.ts",
     "test": "jest",
     "prettier": "prettier . --write"
   },

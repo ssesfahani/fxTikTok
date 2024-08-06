@@ -2916,7 +2916,18 @@ export interface Video {
   downloadAddr: string
   shareCover: string[]
   reflowCover: string
+  bitrate: number
+  encodedType: string
+  format: string
+  videoQuality: string
+  encodeUserTag: string
+  codecType: string
+  definition: string
+  subtitleInfos: any[]
   zoomCover: ZoomCover
+  volumeInfo: VolumeInfo
+  bitrateInfo: BitrateInfo[]
+  VQScore: string
 }
 
 export interface ZoomCover {
@@ -2924,6 +2935,29 @@ export interface ZoomCover {
   '480': string
   '720': string
   '960': string
+}
+
+export interface VolumeInfo {
+  Loudness: number
+  Peak: number
+}
+
+export interface BitrateInfo {
+  Bitrate: number
+  QualityType: number
+  GearName: string
+  PlayAddr: PlayAddr
+  CodecType: string
+  MVMAF: string
+}
+
+export interface PlayAddr {
+  DataSize: string
+  Uri: string
+  UrlList: string[]
+  UrlKey: string
+  FileHash: string
+  FileCs: string
 }
 
 export interface Author {
