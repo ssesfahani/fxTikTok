@@ -211,7 +211,8 @@ app.get('/generate/alternate', (c) => {
 
 app.get('/generate/video/:videoId', async (c) => {
   const { videoId } = c.req.param()
-  const forceLow = c.req.query('h264') === 'true' || c.req.query('encoder') === 'h264' || c.req.query('quality') === 'h264'
+  const forceLow =
+    c.req.query('h264') === 'true' || c.req.query('encoder') === 'h264' || c.req.query('quality') === 'h264'
 
   try {
     // To ensure the video is valid, decrease load on TikWM by checking the video data first
