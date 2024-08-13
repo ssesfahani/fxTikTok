@@ -34,6 +34,22 @@ describe('GET /@i/video/:videoId', () => {
   })
 })
 
+// age restricted video
+describe('GET /@i/video/:videoId (age restricted)', () => {
+  // /t/ZP81NmQk9/
+  it('should return 200', async () => {
+    const res = await app.request('/t/ZP81NmQk9', {
+      method: 'GET',
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; Discordbot/2.0; +https://discordapp.com)'
+      }
+    })
+
+    expect(res.status).toBe(200)
+    expect(await res.text()).toContain('⚠️')
+  })
+})
+
 describe('GET /t/:videoId', () => {
   it('should return 200', async () => {
     const res = await app.request('/t/ZPRKrbUB1', {

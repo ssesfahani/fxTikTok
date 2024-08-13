@@ -2899,6 +2899,7 @@ export interface ItemStruct {
   collected: boolean
   channelTags: any[]
   item_control: ItemControl
+  isContentClassified: boolean
   IsAigc: boolean
   AIGCDescription: string
 }

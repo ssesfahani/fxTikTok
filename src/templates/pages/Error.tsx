@@ -1,4 +1,3 @@
-import { AwemeList } from '../../types/API'
 import MetaHelper from '../../util/metaHelper'
 
 export function ErrorResponse(error: string): JSX.Element {

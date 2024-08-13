@@ -3,7 +3,7 @@ import { cache } from 'hono/cache'
 
 import { scrapeLiveData, scrapeVideoData } from './services/tiktok'
 import { grabAwemeId } from './services/tiktok'
-import { VideoResponse, ErrorResponse, LiveResponse } from './templates'
+import { VideoResponse, ErrorResponse, LiveResponse, WarningResponse } from './templates'
 import generateAlternate from './util/generateAlternate'
 import { returnHTMLResponse } from './util/responseHelper'
 
@@ -141,6 +141,11 @@ async function handleVideo(c: any): Promise<Response> {
         })
       }
     } else {
+      if (videoInfo.isContentClassified === true) {
+        const responseContent = await WarningResponse('Sensitive Content', 'the video being age-restricted')
+        return returnHTMLResponse(responseContent, 200)
+      }
+
       const responseContent = await VideoResponse(videoInfo)
       return returnHTMLResponse(responseContent)
     }
