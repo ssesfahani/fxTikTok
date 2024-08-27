@@ -80,6 +80,8 @@ async function handleShort(c: any): Promise<Response> {
 
 async function handleVideo(c: any): Promise<Response> {
   const { videoId } = c.req.param()
+  const { addDesc } = c.req.query()
+
   let id = videoId.split('.')[0] // for .mp4, .webp, etc.
 
   // If the user agent is a bot, redirect to the TikTok page
@@ -146,7 +148,10 @@ async function handleVideo(c: any): Promise<Response> {
         return returnHTMLResponse(responseContent, 200)
       }
 
-      const responseContent = await VideoResponse(videoInfo)
+      const responseContent = await VideoResponse(
+        videoInfo,
+        (addDesc || 'false').toLowerCase() == 'true' || url.hostname.includes('a.tnktok.com')
+      )
       return returnHTMLResponse(responseContent)
     }
   } catch (e) {

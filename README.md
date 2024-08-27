@@ -49,6 +49,18 @@ Don't want all that statistic clutter on your embed and only want the video or i
 
 > Alternatively, you can also set `isDirect` to true thru the URL query by adding `?isDirect=true` at the end of your URL
 
+### I don't see the video's caption!
+
+By default, we put the description into the `og:description` tag but Discord removes that from the embed if theres a video inside the embed. We decided not to add it to the top like what [tfxktok.com](https://tfxktok.com) does to prevent the embed from getting too cluttered with hashtags.
+
+But, we want to give the option for users to add it in case it brings additional context to the video. You can change your URL to `a.tnktok.com` to add the description to the top.
+
+|         Before         |        After         |
+| :--------------------: | :------------------: |
+| **www**.t**i**ktok.com | **a**.t**n**ktok.com |
+
+> Alternatively, you can also set `addDesc` to true thru the URL query by adding `?addDesc=true` at the end of your URL
+
 ### Why use tnktok.com?
 
 We check all the boxes for being one of the best TikTok embedding services with many features that others don't have. Here's a table comparing our service, tnktok.com, with the other TikTok embedding services as well as TikTok's default embeds.

@@ -2,27 +2,8 @@ import MetaHelper from '../../util/metaHelper'
 import { ItemStruct } from '../../types/Web'
 import { formatNumber } from '../../util/format'
 
-export function VideoResponse(data: ItemStruct): JSX.Element {
+export function VideoResponse(data: ItemStruct, addDesc: Boolean): JSX.Element {
   let videoUrl = 'https://fxtiktok-rewrite.dargy.workers.dev/generate/video/' + data.id
-
-  // NOTE - This snippet was used to get a dynamic URL from the TikTok API but now we are mainly using web scraping to get the video data, which doesn't provide a dynamic URL
-  /*
-  if (data.video.duration > 0 && data.videos_addr) {
-    const awemeVideo = data.videos_addr.find((url) =>
-        url.includes("/aweme/v1/play"),
-      );
-
-    if (awemeVideo) {
-      const url = new URL(awemeVideo);
-
-      const videoId = url.searchParams.get("video_id");
-      const fileId = url.searchParams.get("file_id");
-
-      videoUrl = `https://${url.hostname}/aweme/v1/play/?video_id=${videoId}&file_id=${fileId}&item_id=${data.aweme_id}`;
-    }
-  }
-  */
-
   let videoMeta: { name: string; content: string }[] = []
 
   if (data.video.duration !== 0) {
@@ -131,7 +112,8 @@ export function VideoResponse(data: ItemStruct): JSX.Element {
         ],
         {
           unique_id: data.author.uniqueId,
-          nickname: data.author.nickname
+          nickname: data.author.nickname,
+          ...(addDesc ? { description: data.desc } : {})
         }
       )}
     </>
