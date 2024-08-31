@@ -72,6 +72,7 @@ export function VideoResponse(data: ItemStruct, addDesc: Boolean): JSX.Element {
   title += `❤️ ${formatNumber(data.stats.diggCount.toString())} `
   title += `💬 ${formatNumber(data.stats.commentCount.toString())}  `
   title += `🔁 ${formatNumber(data.stats.shareCount.toString())}  `
+
   if (data.imagePost) {
     title += `🖼️ ${data.imagePost.images.length.toString()} `
   }
@@ -104,10 +105,14 @@ export function VideoResponse(data: ItemStruct, addDesc: Boolean): JSX.Element {
             name: 'og:url',
             content: `https://www.tiktok.com/@${data.author.uniqueId}/video/${data.id}`
           },
-          {
-            name: 'og:description',
-            content: data.desc
-          },
+          ...(!addDesc
+            ? [
+                {
+                  name: 'og:description',
+                  content: data.desc
+                }
+              ]
+            : []),
           ...videoMeta
         ],
         {

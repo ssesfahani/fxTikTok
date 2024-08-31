@@ -1,4 +1,5 @@
-#  fxTikTok
+# fxTikTok
+
 Embed TikTok videos and slideshows on Discord with just `s/i/n`
 
 [![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/okdargy/fxtiktok)
@@ -9,8 +10,8 @@ Embed TikTok videos and slideshows on Discord with just `s/i/n`
   <summary>Click here to preview how fxTikTok looks in action</summary>
 
 | <img src="https://raw.githubusercontent.com/okdargy/fxTikTok/master/.github/readme/compare.png" alt="Video Preview" height="400px" /> |
-| :--------------------------------------------------------------------------------------------------------------------------------------------: |
-|                                           Comparing `tiktok.com` vs. `tnktok.com` embeds on Discord                                            |
+| :-----------------------------------------------------------------------------------------------------------------------------------: |
+|                                       Comparing `tiktok.com` vs. `tnktok.com` embeds on Discord                                       |
 
 | <img src="https://raw.githubusercontent.com/okdargy/fxTikTok/master/.github/readme/slideshow.png" alt="Slideshow Preview" /> |
 | :--------------------------------------------------------------------------------------------------------------------------: |
@@ -21,12 +22,13 @@ Embed TikTok videos and slideshows on Discord with just `s/i/n`
 |                                                 Live video embeds                                                  |
 
 | <img src="https://raw.githubusercontent.com/okdargy/fxTikTok/master/.github/readme/direct.png" alt="Direct Preview" height="400px" /> |
-| :--------------------------------------------------------------------------------------------------------------------: |
-|                                               Direct image/video support                                               |
+| :-----------------------------------------------------------------------------------------------------------------------------------: |
+|                                                      Direct image/video support                                                       |
 
 </details>
 
-## 📖 Usage 
+## 📖 Usage
+
 Using fxTikTok is easy on Discord. Fix ugly and unresponsive embeds by sending your TikTok link and then typing `s/i/n`
 
 <details>
@@ -58,7 +60,6 @@ Don't want all that statistic clutter on your embed and only want the video or i
 By default, we put the description into the `og:description` tag, but Discord removes that from the embed if there's a video inside the embed. We decided not to add it to the top like what [tfxktok.com](https://tfxktok.com) does to prevent the embed from getting too cluttered with hashtags.
 
 However, we want to give users the option to add it in case it brings additional context to the video. You can change your URL to `a.tnktok.com` to add the description to the top.
-
 
 |         Before         |        After         |
 | :--------------------: | :------------------: |

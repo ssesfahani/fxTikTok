@@ -8,34 +8,12 @@ import generateAlternate from './util/generateAlternate'
 import { returnHTMLResponse } from './util/responseHelper'
 
 const app = new Hono()
+
 const awemeIdPattern = /^\d{1,19}$/
 const awemeLinkPattern = /\/@([\w\d_.]+)\/(video|photo|live)\/?(\d{19})?/
-
 // Credit: https://github.com/FixTweet/FxTwitter/blob/b6564868719473f926c4e7e28ec95059506f69e2/src/constants.ts#L24
 const BOT_REGEX =
   /bot|facebook|embed|got|firefox\/92|firefox\/38|curl|wget|go-http|yahoo|generator|whatsapp|revoltchat|preview|link|proxy|vkshare|images|analyzer|index|crawl|spider|python|cfnetwork|node|mastodon|http\.rb|ruby|bun\/|fiddler|iframely|steamchaturllookup/i
-
-app.get('/test/:videoId', async (c) => {
-  const { videoId } = c.req.param()
-
-  try {
-    const videoData = await scrapeVideoData(videoId)
-
-    return new Response(JSON.stringify(videoData), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8'
-      }
-    })
-  } catch (e) {
-    return new Response((e as Error).message, {
-      status: 500,
-      headers: {
-        'Content-Type': 'text/plain; charset=utf-8'
-      }
-    })
-  }
-})
 
 app.get('/', (c) => {
   return new Response('', {
@@ -299,7 +277,7 @@ app.get('/generate/image/:videoId/:imageCount', async (c) => {
         headers: {
           'Cache-Control': 'no-cache, no-store, must-revalidate'
         }
-      }) 
+      })
     }
 
     const images = await fetch('https://tikwm.com/api/', {
