@@ -159,6 +159,7 @@ async function handleVideo(c: any): Promise<Response> {
     return returnHTMLResponse(responseContent, 500)
   }
 }
+
 async function handleLive(c: any): Promise<Response> {
   const { author, videoId } = c.req.param()
   let authorName = author
@@ -291,6 +292,15 @@ app.get('/generate/image/:videoId/:imageCount', async (c) => {
 
   try {
     const data = await scrapeVideoData(videoId)
+
+    if (data instanceof Error) {
+      return new Response((data as Error).message, {
+        status: 500,
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate'
+        }
+      }) 
+    }
 
     const images = await fetch('https://tikwm.com/api/', {
       headers: {
