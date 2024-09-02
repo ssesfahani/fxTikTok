@@ -1,6 +1,7 @@
 import MetaHelper from '../../util/metaHelper'
 import { ItemStruct } from '../../types/Web'
 import { formatNumber } from '../../util/format'
+import { Buffer } from 'node:buffer';
 
 export function VideoResponse(data: ItemStruct, addDesc: Boolean): JSX.Element {
   let videoUrl = 'https://fxtiktok-rewrite.dargy.workers.dev/generate/video/' + data.id
@@ -118,7 +119,7 @@ export function VideoResponse(data: ItemStruct, addDesc: Boolean): JSX.Element {
         {
           unique_id: data.author.uniqueId,
           nickname: data.author.nickname,
-          ...(addDesc ? { description: data.desc } : {})
+          ...(addDesc ? { description: Buffer.from(data.desc).toString('base64') } : {})
         }
       )}
     </>

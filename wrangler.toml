@@ -1,6 +1,7 @@
 name = "fxtiktok-rewrite"
 compatibility_date = "2023-01-01"
 main = "src/index.ts"
+node_compat = true
 
 vars = { WORKER_ENV = "production", BASE_URL = "https://fxtiktok-rewrite.dargy.workers.dev" }
 
