@@ -40,6 +40,7 @@ export async function scrapeVideoData(awemeId: string, author?: string): Promise
       json['__DEFAULT_SCOPE__']['webapp.video-detail'].statusCode == 10204
     )
       throw new Error('Could not find video data')
+
     const videoInfo = json['__DEFAULT_SCOPE__']['webapp.video-detail']['itemInfo']['itemStruct']
 
     return videoInfo

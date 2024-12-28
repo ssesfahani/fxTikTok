@@ -1,7 +1,7 @@
 import MetaHelper from '../../util/metaHelper'
 import { ItemStruct } from '../../types/Web'
 import { formatNumber } from '../../util/format'
-import { Buffer } from 'node:buffer';
+import { Buffer } from 'node:buffer'
 
 export function VideoResponse(data: ItemStruct, addDesc: Boolean): JSX.Element {
   let videoUrl = 'https://fxtiktok-rewrite.dargy.workers.dev/generate/video/' + data.id
@@ -11,6 +11,10 @@ export function VideoResponse(data: ItemStruct, addDesc: Boolean): JSX.Element {
     videoMeta = [
       {
         name: 'og:video',
+        content: videoUrl
+      },
+      {
+        name: 'og:video:secure_url',
         content: videoUrl
       },
       {
@@ -30,8 +34,33 @@ export function VideoResponse(data: ItemStruct, addDesc: Boolean): JSX.Element {
         content: 'video'
       },
       {
+        name: 'og:video:type',
+        content: 'video/mp4'
+      },
+
+      {
         name: 'twitter:card',
         content: 'player'
+      },
+      {
+        name: 'twitter:player:height',
+        content: data.video.height.toString()
+      },
+      {
+        name: 'twitter:player:width',
+        content: data.video.width.toString()
+      },
+      {
+        name: 'twitter:player',
+        content: videoUrl
+      },
+      {
+        name: 'twitter:player:stream',
+        content: videoUrl
+      },
+      {
+        name: 'twitter:player:stream:content_type',
+        content: 'video/mp4'
       }
     ]
   } else {

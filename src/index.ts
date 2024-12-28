@@ -10,8 +10,8 @@ import { returnHTMLResponse } from './util/responseHelper'
 const app = new Hono()
 
 const awemeIdPattern = /^\d{1,19}$/
-const awemeLinkPattern = /\/@([\w\d_.]+)\/(video|photo|live)\/?(\d{19})?/
-// Credit: https://github.com/FixTweet/FxTwitter/blob/b6564868719473f926c4e7e28ec95059506f69e2/src/constants.ts#L24
+const awemeLinkPattern = /\/@?([\w\d_.]*)\/(video|photo|live)\/?(\d{19})?/
+// Credit: https://github.com/FixTweet/FxTwitter/blob/main/src/constants.ts#L24
 const BOT_REGEX =
   /bot|facebook|embed|got|firefox\/92|firefox\/38|curl|wget|go-http|yahoo|generator|whatsapp|revoltchat|preview|link|proxy|vkshare|images|analyzer|index|crawl|spider|python|cfnetwork|node|mastodon|http\.rb|ruby|bun\/|fiddler|iframely|steamchaturllookup/i
 
@@ -79,6 +79,7 @@ async function handleVideo(c: any): Promise<Response> {
 
   if (!awemeIdPattern.test(id)) {
     const url = await grabAwemeId(id)
+    console.log('aweme url', url)
     const match = url.pathname.match(awemeLinkPattern)
 
     if (match) {
