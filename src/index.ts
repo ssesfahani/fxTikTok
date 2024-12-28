@@ -79,7 +79,6 @@ async function handleVideo(c: any): Promise<Response> {
 
   if (!awemeIdPattern.test(id)) {
     const url = await grabAwemeId(id)
-    console.log('aweme url', url)
     const match = url.pathname.match(awemeLinkPattern)
 
     if (match) {

@@ -19,7 +19,7 @@ export async function scrapeVideoData(awemeId: string, author?: string): Promise
       Cookie: cookie.getCookiesAsString()
     },
     cf: {
-      cacheEverything: true,
+      cacheEverything: false,
       cacheTtlByStatus: { '200-299': 86400, 404: 1, '500-599': 0 }
     }
   })

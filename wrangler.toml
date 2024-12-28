@@ -9,5 +9,8 @@ vars = { WORKER_ENV = "production", BASE_URL = "https://fxtiktok-rewrite.dargy.w
 name = "fxtiktok-rewrite-dev"
 vars = { WORKER_ENV = "staging", BASE_URL = "https://fxtiktok-rewrite-dev.dargy.workers.dev" }
 
+[observability.logs]
+enabled = true
+
 [env.local]
 vars = { WORKER_ENV = "local", BASE_URL = "http://127.0.0.1:8787" }
