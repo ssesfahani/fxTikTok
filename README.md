@@ -73,12 +73,12 @@ We check all the boxes for being one of the best TikTok embedding services with 
 
 |                                        | [tnktok.com](https://www.tnktok.com) | Default TikTok | [tiktxk.com](https://tiktxk.com) | [vxtiktok.com](https://vxtiktok.com) | [tfxktok.com](https://tfxktok.com) |
 | -------------------------------------- | ------------------------------------ | -------------- | -------------------------------- | ------------------------------------ | ---------------------------------- |
-| Embed playable videos                  | ☑️                                   | ❌             | ❔                               | ☑️                                   | ☑️                                 |
+| Embed playable videos                  | ☑️                                   | ☑️             | ❔                               | ☑️                                   | ☑️                                 |
 | Embed multi-image slideshows           | ☑️                                   | ❌             | ❔                               | ❌                                   | ☑️                                 |
 | Embed lives                            | ☑️                                   | ➖             | ❌                               | ❌                                   | ☑️                                 |
 | Open source                            | ☑️                                   | ❌             | ☑️                               | ☑️                                   | ❌                                 |
 | Supports direct embeds                 | ☑️                                   | ❌             | ❌                               | ❌                                   | ❌                                 |
-| Shows like, shares, comments           | ☑️                                   | ➖             | ➖                               | ☑️                                   | ☑️                                 |
+| Shows like, shares, comments           | ☑️                                   | ☑️             | ➖                               | ☑️                                   | ☑️                                 |
 | Removes tracking for redirects         | ☑️                                   | ❌             | ☑️                               | ☑️                                   | ☑️                                 |
 | Support for multi-continent short URLs | ☑️                                   | ☑️             | ☑️                               | ☑️                                   | ❌                                 |
 | Support for h265/high quality          | ☑️                                   | ❌             | ❔                               | ❌                                   | ❌                                 |
