@@ -12,6 +12,18 @@ describe('GET /@i/video/:videoId', () => {
     expect(res.status).toBe(200)
   })
 
+  it('should return 200 (h.265)', async () => {
+    const res = await app.request('/@pr4yforgabs/video/7332187682480590112?hq=true', {
+      method: 'GET',
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; Discordbot/2.0; +https://discordapp.com)'
+      }
+    })
+
+    expect(res.status).toBe(200)
+    expect(await res.text()).toContain('?hq=true')
+  })
+
   // no discord user agent, redirects
   it('should return 302', async () => {
     const res = await app.request('/@pr4yforgabs/video/7332187682480590112', {
@@ -70,6 +82,15 @@ describe('GET /generate/video/:videoId', () => {
     })
 
     expect(res.status).toBe(302)
+  })
+
+  it('should return 302 (h.265)', async () => {
+    const res = await app.request('/generate/video/7332187682480590112?hq=true', {
+      method: 'GET'
+    })
+
+    expect(res.status).toBe(302)
+    expect(res.headers.get('Location')).toContain('hdplay')
   })
 
   it('should return 500', async () => {

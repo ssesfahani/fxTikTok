@@ -9,6 +9,7 @@ const app = new Hono()
 
 const awemeIdPattern = /^\d{1,19}$/
 const awemeLinkPattern = /\/@?([\w\d_.]*)\/(video|photo|live)\/?(\d{19})?/
+
 // Credit: https://github.com/FixTweet/FxTwitter/blob/main/src/constants.ts#L24
 const BOT_REGEX =
   /bot|facebook|embed|got|firefox\/92|firefox\/38|curl|wget|go-http|yahoo|generator|whatsapp|revoltchat|preview|link|proxy|vkshare|images|analyzer|index|crawl|spider|python|cfnetwork|node|mastodon|http\.rb|ruby|bun\/|fiddler|iframely|steamchaturllookup/i
@@ -26,7 +27,6 @@ async function handleShort(c: any): Promise<Response> {
   const { videoId } = c.req.param()
   let id = videoId.split('.')[0] // for .mp4, .webp, etc.
 
-  // First, we need to find where the vm link goes to
   const res = await fetch('https://vm.tiktok.com/' + id)
   const link = new URL(res.url)
 
@@ -56,7 +56,7 @@ async function handleShort(c: any): Promise<Response> {
 
 async function handleVideo(c: any): Promise<Response> {
   const { videoId } = c.req.param()
-  const { addDesc } = c.req.query()
+  const { addDesc, hq } = c.req.query()
 
   let id = videoId.split('.')[0] // for .mp4, .webp, etc.
 
@@ -126,7 +126,8 @@ async function handleVideo(c: any): Promise<Response> {
 
       const responseContent = await VideoResponse(
         videoInfo,
-        (addDesc || 'false').toLowerCase() == 'true' || url.hostname.includes('a.tnktok.com')
+        (addDesc || 'false').toLowerCase() == 'true' || url.hostname.includes('a.tnktok.com'),
+        (url.hostname.includes('hq.tnktok.com') || (hq || 'false').toLowerCase() == 'true')
       )
       return returnHTMLResponse(responseContent)
     }
@@ -198,8 +199,7 @@ app.get('/generate/alternate', (c) => {
 
 app.get('/generate/video/:videoId', async (c) => {
   const { videoId } = c.req.param()
-  const forceLow =
-    c.req.query('h264') === 'true' || c.req.query('encoder') === 'h264' || c.req.query('quality') === 'h264'
+  const hq = c.req.query('hq') === 'true' || c.req.query('quality') === 'hq'
 
   try {
     // To ensure the video is valid, decrease load on TikWM by checking the video data first
@@ -216,7 +216,7 @@ app.get('/generate/video/:videoId', async (c) => {
 
     const highAvailable = data.video.bitrateInfo.find((bitrate) => bitrate.CodecType.includes('h265'))
 
-    if (highAvailable && !forceLow) {
+    if (hq && highAvailable) {
       return c.redirect(`https://tikwm.com/video/media/hdplay/${videoId}.mp4`)
     } else {
       return c.redirect(`https://tikwm.com/video/media/play/${videoId}.mp4`)

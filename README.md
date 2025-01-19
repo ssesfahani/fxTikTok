@@ -55,7 +55,7 @@ Don't want all that statistic clutter on your embed and only want the video or i
 
 > Alternatively, you can also set `isDirect` to true thru the URL query by adding `?isDirect=true` at the end of your URL
 
-### I don't see the video's caption!
+### "I don't see the video's caption!"
 
 By default, we put the description into the `og:description` tag, but Discord removes that from the embed if there's a video inside the embed. We decided not to add it to the top like what [tfxktok.com](https://tfxktok.com) does to prevent the embed from getting too cluttered with hashtags.
 
@@ -66,6 +66,15 @@ However, we want to give users the option to add it in case it brings additional
 | **www**.t**i**ktok.com | **a**.t**n**ktok.com |
 
 > Alternatively, you can also set `addDesc` to true thru the URL query by adding `?addDesc=true` at the end of your URL
+
+### Changing to High Quality
+
+TikTok supports H.265/HEVC (High Efficiency Video Coding) which offers significantly better quality at the same file size compared to H.264, at the cost of compatibility. By default, we use H.264 quality since [many users report issues with embeds breaking with H.265](https://github.com/okdargy/fxTikTok/issues/14), but support enabling H.265.
+
+To enable high quality H.265 playback, add `?hq=true` or use `hq.tnktok.com`:
+|         Before         |        After         |
+| :--------------------: | :------------------: |
+| **www**.t**i**ktok.com | **hq**.t**n**ktok.com |
 
 ### Why use tnktok.com?
 

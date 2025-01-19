@@ -3,8 +3,8 @@ import { ItemStruct } from '../../types/Web'
 import { formatNumber } from '../../util/format'
 import { Buffer } from 'node:buffer'
 
-export function VideoResponse(data: ItemStruct, addDesc: Boolean): JSX.Element {
-  let videoUrl = 'https://fxtiktok-rewrite.dargy.workers.dev/generate/video/' + data.id
+export function VideoResponse(data: ItemStruct, addDesc: Boolean, hq: boolean): JSX.Element {
+  let videoUrl = 'https://fxtiktok-rewrite.dargy.workers.dev/generate/video/' + data.id + (hq ? '?hq=true' : '')
   let videoMeta: { name: string; content: string }[] = []
 
   if (data.video.duration !== 0) {
