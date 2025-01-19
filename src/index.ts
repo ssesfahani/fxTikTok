@@ -1,9 +1,7 @@
 import { Hono } from 'hono'
-import { cache } from 'hono/cache'
-
 import { scrapeLiveData, scrapeVideoData } from './services/tiktok'
 import { grabAwemeId } from './services/tiktok'
-import { VideoResponse, ErrorResponse, LiveResponse, WarningResponse } from './templates'
+import { VideoResponse, ErrorResponse, LiveResponse, WarningResponse, MessageResponse } from './templates'
 import generateAlternate from './util/generateAlternate'
 import { returnHTMLResponse } from './util/responseHelper'
 
@@ -329,26 +327,49 @@ app.get('/generate/livePic/:author', async (c) => {
   }
 })
 
+async function handleDown(c: any): Promise<Response> {
+  if (!BOT_REGEX.test(c.req.header('User-Agent') || '')) {
+    const url = new URL(c.req.url)
+
+    // Remove tracking parameters
+    url.search = ''
+
+    return new Response('', {
+      status: 302,
+      headers: {
+        Location: 'https://www.tiktok.com' + url.pathname
+      }
+    })
+  }
+
+  const responseContent = await MessageResponse(
+    'TikTok has been banned in the United States',
+    'As many of you may know, the U.S. Supreme Court has upheld a law that effectively bans TikTok in the United States.\n\n' +
+    'Because we utilize Cloudflare Workers, which primarily operates through U.S.-based servers, we are unable to access TikTok\'s services.\n\nWe apologize for the inconvenience.'
+   )
+    return returnHTMLResponse(responseContent, 200, true);
+}
+
 const routes = [
   {
     path: '/:videoId',
-    handler: handleShort
+    handler: handleDown
   },
   {
     path: '/t/:videoId',
-    handler: handleShort
+    handler: handleDown
   },
   {
     path: '/*/video/:videoId',
-    handler: handleVideo
+    handler: handleDown
   },
   {
     path: '/*/photo/:videoId',
-    handler: handleVideo
+    handler: handleDown
   },
   {
     path: '/:author/live',
-    handler: handleLive
+    handler: handleDown
   }
 ]
 
