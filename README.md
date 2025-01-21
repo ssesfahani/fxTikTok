@@ -72,9 +72,15 @@ However, we want to give users the option to add it in case it brings additional
 TikTok supports H.265/HEVC (High Efficiency Video Coding) which offers significantly better quality at the same file size compared to H.264, at the cost of compatibility. By default, we use H.264 quality since [many users report issues with embeds breaking with H.265](https://github.com/okdargy/fxTikTok/issues/14), but support enabling H.265.
 
 To enable high quality H.265 playback, add `?hq=true` or use `hq.tnktok.com`:
-|         Before         |        After         |
+| Before | After |
 | :--------------------: | :------------------: |
 | **www**.t**i**ktok.com | **hq**.t**n**ktok.com |
+
+### Combining Modes
+
+You can combine different modes by using specific hostnames or URL query parameters. For example, if you want to enable H.265 and also see the caption, you can use `hq.a.tnktok.com` or add `?hq=true&addDesc=true` to the URL.
+
+> You cannot use Direct Mode and Caption Mode simultaneously since they contradict themselves.
 
 ### Why use tnktok.com?
 

@@ -1,6 +1,11 @@
 name: Run Unit Tests with Jest
 
 on:
+  push:
+    branches:
+      - main
+      - master
+      - hono-rewrite
   pull_request:
     branches:
       - main

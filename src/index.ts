@@ -99,17 +99,26 @@ async function handleVideo(c: any): Promise<Response> {
     const extensions = ['mp4', 'png', 'jpg', 'jpeg', 'webp', 'webm']
 
     if (
-      url.hostname.includes('d.tnktok.com') ||
+      url.hostname.includes('d.') ||
       c.req.query('isDirect') === 'true' ||
       extensions.some((suffix) => c.req.path.endsWith(suffix))
     ) {
       if (videoInfo.video.duration > 0) {
-        return new Response('', {
-          status: 302,
-          headers: {
-            Location: 'https://fxtiktok-rewrite.dargy.workers.dev/generate/video/' + videoInfo.id
-          }
-        })
+        if ((hq || 'false').toLowerCase() == 'true' || url.hostname.includes('hq.')) {
+          return new Response('', {
+            status: 302,
+            headers: {
+              Location: 'https://fxtiktok-rewrite.dargy.workers.dev/generate/video/' + videoInfo.id + '?hq=true'
+            }
+          })
+        } else {
+          return new Response('', {
+            status: 302,
+            headers: {
+              Location: 'https://fxtiktok-rewrite.dargy.workers.dev/generate/video/' + videoInfo.id
+            }
+          })
+        }
       } else {
         return new Response('', {
           status: 302,
@@ -126,8 +135,8 @@ async function handleVideo(c: any): Promise<Response> {
 
       const responseContent = await VideoResponse(
         videoInfo,
-        (addDesc || 'false').toLowerCase() == 'true' || url.hostname.includes('a.tnktok.com'),
-        (url.hostname.includes('hq.tnktok.com') || (hq || 'false').toLowerCase() == 'true')
+        (addDesc || 'false').toLowerCase() == 'true' || url.hostname.includes('a.'),
+        (hq || 'false').toLowerCase() == 'true' || url.hostname.includes('hq.')
       )
       return returnHTMLResponse(responseContent)
     }
