@@ -1,4 +1,8 @@
+import { Context } from 'hono'
+import { env } from 'hono/adapter'
+
 export default function MetaHelper(
+  c: Context,
   tags: {
     name: string
     content: string | null
@@ -7,7 +11,8 @@ export default function MetaHelper(
     [key: string]: string | number
   }
 ): JSX.Element {
-  let alternateUrl = new URL('https://fxtiktok-rewrite.dargy.workers.dev/generate/alternate')
+  const { OFFLOAD_URL } = env(c) as { OFFLOAD_URL: string }
+  let alternateUrl = new URL(OFFLOAD_URL || 'https://offload.tnktok.com' + '/generate/alternate')
 
   if (alternate) {
     for (const key in alternate) {

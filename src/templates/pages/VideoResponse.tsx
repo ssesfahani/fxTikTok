@@ -2,8 +2,9 @@ import MetaHelper from '../../util/metaHelper'
 import { ItemStruct } from '../../types/Web'
 import { formatNumber } from '../../util/format'
 import { Buffer } from 'node:buffer'
+import { Context } from 'hono'
 
-export function VideoResponse(data: ItemStruct, addDesc: Boolean, hq: boolean): JSX.Element {
+export function VideoResponse(data: ItemStruct, addDesc: Boolean, hq: boolean, c: Context): JSX.Element {
   let videoUrl = 'https://fxtiktok-rewrite.dargy.workers.dev/generate/video/' + data.id + (hq ? '?hq=true' : '')
   let videoMeta: { name: string; content: string }[] = []
 
@@ -109,7 +110,7 @@ export function VideoResponse(data: ItemStruct, addDesc: Boolean, hq: boolean): 
 
   return (
     <>
-      {MetaHelper(
+      {MetaHelper(c,
         [
           {
             name: 'og:title',

@@ -3,14 +3,14 @@ compatibility_date = "2023-01-01"
 main = "src/index.ts"
 node_compat = true
 
-vars = { WORKER_ENV = "production", BASE_URL = "https://fxtiktok-rewrite.dargy.workers.dev" }
+vars = { WORKER_ENV = "production", OFF_LOAD = "https://offload.tnktok.com" }
 
 [env.staging]
 name = "fxtiktok-rewrite-dev"
-vars = { WORKER_ENV = "staging", BASE_URL = "https://fxtiktok-rewrite-dev.dargy.workers.dev" }
+vars = { WORKER_ENV = "staging", OFF_LOAD = "https://fxtiktok-rewrite-dev.dargy.workers.dev" }
 
 [observability.logs]
 enabled = true
 
 [env.local]
-vars = { WORKER_ENV = "local", BASE_URL = "http://127.0.0.1:8787" }
+vars = { WORKER_ENV = "local", OFF_LOAD = "http://127.0.0.1:8787" }

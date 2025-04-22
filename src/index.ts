@@ -14,7 +14,7 @@ const awemeLinkPattern = /\/@?([\w\d_.]*)\/(video|photo|live)\/?(\d{19})?/
 const BOT_REGEX =
   /bot|facebook|embed|got|firefox\/92|firefox\/38|curl|wget|go-http|yahoo|generator|whatsapp|revoltchat|preview|link|proxy|vkshare|images|analyzer|index|crawl|spider|python|cfnetwork|node|mastodon|http\.rb|ruby|bun\/|fiddler|iframely|steamchaturllookup/i
 
-app.get('/', (c) => {
+app.get('/', () => {
   return new Response('', {
     status: 302,
     headers: {
@@ -49,7 +49,7 @@ async function handleShort(c: any): Promise<Response> {
   } else if (link.pathname.includes('/live')) {
     return handleLive(c)
   } else {
-    const responseContent = await ErrorResponse('Invalid vm link')
+    const responseContent = await ErrorResponse('Invalid vm link', c)
     return returnHTMLResponse(responseContent, 400)
   }
 }
@@ -82,7 +82,7 @@ async function handleVideo(c: any): Promise<Response> {
     if (match) {
       id = match[3]
     } else {
-      const responseContent = await ErrorResponse('Invalid video ID')
+      const responseContent = await ErrorResponse('Invalid video ID', c)
       return returnHTMLResponse(responseContent, 400)
     }
   }
@@ -91,7 +91,7 @@ async function handleVideo(c: any): Promise<Response> {
     const videoInfo = await scrapeVideoData(id)
 
     if (videoInfo instanceof Error) {
-      const responseContent = await ErrorResponse((videoInfo as Error).message)
+      const responseContent = await ErrorResponse((videoInfo as Error).message, c)
       return returnHTMLResponse(responseContent, 500)
     }
 
@@ -129,19 +129,20 @@ async function handleVideo(c: any): Promise<Response> {
       }
     } else {
       if (videoInfo.isContentClassified === true) {
-        const responseContent = await WarningResponse('Sensitive Content', 'the video being age-restricted')
+        const responseContent = await WarningResponse('Sensitive Content', 'the video being age-restricted', c)
         return returnHTMLResponse(responseContent, 200)
       }
 
       const responseContent = await VideoResponse(
         videoInfo,
         (addDesc || 'false').toLowerCase() == 'true' || url.hostname.includes('a.'),
-        (hq || 'false').toLowerCase() == 'true' || url.hostname.includes('hq.')
+        (hq || 'false').toLowerCase() == 'true' || url.hostname.includes('hq.'),
+        c
       )
       return returnHTMLResponse(responseContent)
     }
   } catch (e) {
-    const responseContent = await ErrorResponse((e as Error).message)
+    const responseContent = await ErrorResponse((e as Error).message, c)
     return returnHTMLResponse(responseContent, 500)
   }
 }
@@ -172,7 +173,7 @@ async function handleLive(c: any): Promise<Response> {
     if (match) {
       authorName = match[1]
     } else {
-      const responseContent = await ErrorResponse('Invalid live ID')
+      const responseContent = await ErrorResponse('Invalid live ID', c)
       return returnHTMLResponse(responseContent, 400)
     }
   }
@@ -183,14 +184,14 @@ async function handleLive(c: any): Promise<Response> {
     const liveData = await scrapeLiveData(authorName)
 
     if (liveData instanceof Error) {
-      const responseContent = await ErrorResponse((liveData as Error).message)
+      const responseContent = await ErrorResponse((liveData as Error).message, c)
       return returnHTMLResponse(responseContent, 500)
     }
 
-    const responseContent = await LiveResponse(liveData)
+    const responseContent = await LiveResponse(liveData, c)
     return returnHTMLResponse(responseContent)
   } catch (e) {
-    const responseContent = await ErrorResponse((e as Error).message)
+    const responseContent = await ErrorResponse((e as Error).message, c)
     return returnHTMLResponse(responseContent, 500)
   }
 }

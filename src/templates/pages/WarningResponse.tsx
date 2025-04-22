@@ -1,9 +1,10 @@
+import { Context } from 'hono'
 import MetaHelper from '../../util/metaHelper'
 
-export function WarningResponse(title: string, reason: string): JSX.Element {
+export function WarningResponse(title: string, reason: string, c: Context): JSX.Element {
   return (
     <>
-      {MetaHelper([
+      {MetaHelper(c, [
         {
           name: 'og:title',
           content: `⚠️ ${title}`

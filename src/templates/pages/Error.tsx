@@ -1,9 +1,10 @@
+import { Context } from 'hono'
 import MetaHelper from '../../util/metaHelper'
 
-export function ErrorResponse(error: string): JSX.Element {
+export function ErrorResponse(error: string, c: Context): JSX.Element {
   return (
     <>
-      {MetaHelper([
+      {MetaHelper(c, [
         {
           name: 'og:title',
           content: `❌ ${error}`

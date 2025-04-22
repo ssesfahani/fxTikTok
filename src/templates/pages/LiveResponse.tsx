@@ -1,8 +1,9 @@
+import { Context } from 'hono'
 import MetaHelper from '@/util/metaHelper'
 import { LiveRoom } from '@/types/Live'
 import { formatNumber, formatTime } from '@/util/format'
 
-export function LiveResponse(data: LiveRoom): JSX.Element {
+export function LiveResponse(data: LiveRoom, c: Context): JSX.Element {
   let title = ''
 
   title += `👀 ${formatNumber(String(data.liveRoomUserInfo.liveRoom.liveRoomStats.userCount))}  `
@@ -16,7 +17,7 @@ export function LiveResponse(data: LiveRoom): JSX.Element {
 
   return (
     <>
-      {MetaHelper(
+      {MetaHelper(c,
         [
           {
             name: 'og:title',
