@@ -13,8 +13,12 @@ export default function generateAlternate(c: Context): {
   const showSponsor = Math.random() < 0.1 // 1 in 10 chance to show sponsor message, gotta break even somehow
 
   const decodedDescription = description
-    ? decodeURIComponent(atob(decodeURIComponent(description)))
-    : '';
+    ? decodeURIComponent(
+        new TextDecoder('utf-8').decode(
+          Uint8Array.from(atob(decodeURIComponent(description)), (c) => c.charCodeAt(0))
+        )
+      )
+    : ''
 
   // Some Discord embed values are limited to 256 characters, truncate if necessary
   // See more: https://www.pythondiscord.com/pages/guides/python-guides/discord-embed-limits/

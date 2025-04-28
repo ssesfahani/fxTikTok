@@ -24,6 +24,18 @@ describe('GET /@i/video/:videoId', () => {
     expect(await res.text()).toContain('?hq=true')
   })
 
+  it('should return 200 (description)', async () => {
+    const res = await app.request('/@pr4yforgabs/video/7332187682480590112?addDesc=true', {
+      method: 'GET',
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; Discordbot/2.0; +https://discordapp.com)'
+      }
+    })
+
+    expect(res.status).toBe(200)
+    expect(await res.text()).toContain('description=')
+  })
+
   // no discord user agent, redirects
   it('should return 302', async () => {
     const res = await app.request('/@pr4yforgabs/video/7332187682480590112', {
@@ -46,7 +58,6 @@ describe('GET /@i/video/:videoId', () => {
   })
 })
 
-// age restricted video
 describe('GET /@i/video/:videoId (age restricted)', () => {
   // /t/ZP81NmQk9/
   it('should return 200', async () => {
@@ -99,5 +110,27 @@ describe('GET /generate/video/:videoId', () => {
     })
 
     expect(res.status).toBe(500)
+  })
+})
+
+describe('GET /generate/alternate', () => {
+  it('should return 200 (English)', async () => {
+    const res = await app.request('/generate/alternate?description=I2Z5ICNmb3J5b3UgI3N0cmF3YmVycnkgI2Nob2NvbGF0ZSAjY2hvY29sYXRlY292ZXJlZHN0cmF3YmVycmllcyA%253D', {
+      method: 'GET'
+    })
+
+    expect(res.status).toBe(200)
+    const jsonResponse = await res.json() as { provider_name: string };
+    expect(jsonResponse.provider_name).toEqual('#fy #foryou #strawberry #chocolate #chocolatecoveredstrawberries ')
+  })
+
+  it('should return 200 (Russian)', async () => {
+    const res = await app.request('/generate/alternate?description=0JXRgdGC0Ywg0LIg0LrQvtC80LzQtdC90YLQsNGA0LjRj9GFINC%252F0LXRgNC10LLQvtC00YfQuNC60Lgg0YEg0Y%252FQt9GL0LrQsCDQv9GA0LjRiNC10LvRjNGG0LXQsj8g8J%252BRvSDwn5O5OiBhcmllbGlwaWxsbw%253D%253D', {
+      method: 'GET'
+    })
+
+    expect(res.status).toBe(200)
+    const jsonResponse = await res.json() as { provider_name: string };
+    expect(jsonResponse.provider_name).toEqual('Есть в комментариях переводчики с языка пришельцев? 👽 📹: arielipillo')
   })
 })
