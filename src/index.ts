@@ -3,13 +3,10 @@ import { scrapeLiveData, scrapeVideoData } from './services/tiktok'
 import { grabAwemeId } from './services/tiktok'
 import { VideoResponse, ErrorResponse, LiveResponse, WarningResponse } from './templates'
 import { returnHTMLResponse } from './util/responseHelper'
-import { generate, respondAlternative } from './generate'
 import { env } from 'hono/adapter'
+import { generate, respondAlternative, awemeIdPattern, awemeLinkPattern } from './generate'
 
 const app = new Hono()
-
-export const awemeIdPattern = /^\d{1,19}$/
-export const awemeLinkPattern = /\/@?([\w\d_.]*)\/(video|photo|live)\/?(\d{19})?/
 
 // Credit: https://github.com/FixTweet/FxTwitter/blob/main/src/constants.ts#L24
 const BOT_REGEX =
@@ -200,11 +197,6 @@ async function handleLive(c: any): Promise<Response> {
   }
 }
 
-app.get('/api/v1/statuses/:videoId', async (c) => respondAlternative(c))
-app.get('/users/:username/statuses/:videoId', async (c) => respondAlternative(c));
-
-app.route('/generate', generate)
-
 const routes = [
   {
     path: '/:videoId',
@@ -233,5 +225,10 @@ routes.forEach((route) => {
   app.get(route.path, route.handler)
   app.get(route.path + '/', route.handler)
 })
+
+app.get('/api/v1/statuses/:videoId', async (c) => respondAlternative(c))
+app.get('/users/:username/statuses/:videoId', async (c) => respondAlternative(c));
+
+app.route('/generate', generate)
 
 export default app

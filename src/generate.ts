@@ -1,10 +1,12 @@
 import { Context, Hono } from "hono";
+export const generate = new Hono();
+
 import generateAlternate from './util/generateAlternate'
 import generateActivity from "./util/generateActivity";
-import { awemeIdPattern } from ".";
-import { scrapeAvatarUri, scrapeLiveData, scrapeVideoData } from "./services/tiktok";
+import { scrapeAvatarUri, scrapeVideoData } from "./services/tiktok";
 
-export const generate = new Hono();
+export const awemeIdPattern = /^\d{1,19}$/;
+export const awemeLinkPattern = /\/@?([\w\d_.]*)\/(video|photo|live)\/?(\d{19})?/
 
 export async function respondAlternative(c: Context) {
   const { videoId } = c.req.param()
