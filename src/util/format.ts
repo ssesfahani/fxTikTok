@@ -1,9 +1,8 @@
-export function formatNumber(value: string): string {
+export function formatNumber(value: string | number): string {
   if (value === '0') return '0'
 
   // parse num to int
-  const num = parseInt(value)
-  if (isNaN(num)) return value
+  const num = typeof value === 'string' ? parseInt(value) : value
 
   if (num < 1000) return num.toString()
   if (num < 10000) return (num / 1000).toFixed(1) + 'k'

@@ -2,13 +2,14 @@ import { Hono } from 'hono'
 import { scrapeLiveData, scrapeVideoData } from './services/tiktok'
 import { grabAwemeId } from './services/tiktok'
 import { VideoResponse, ErrorResponse, LiveResponse, WarningResponse } from './templates'
-import generateAlternate from './util/generateAlternate'
 import { returnHTMLResponse } from './util/responseHelper'
+import { generate, respondAlternative } from './generate'
+import { env } from 'hono/adapter'
 
 const app = new Hono()
 
-const awemeIdPattern = /^\d{1,19}$/
-const awemeLinkPattern = /\/@?([\w\d_.]*)\/(video|photo|live)\/?(\d{19})?/
+export const awemeIdPattern = /^\d{1,19}$/
+export const awemeLinkPattern = /\/@?([\w\d_.]*)\/(video|photo|live)\/?(\d{19})?/
 
 // Credit: https://github.com/FixTweet/FxTwitter/blob/main/src/constants.ts#L24
 const BOT_REGEX =
@@ -103,19 +104,22 @@ async function handleVideo(c: any): Promise<Response> {
       c.req.query('isDirect') === 'true' ||
       extensions.some((suffix) => c.req.path.endsWith(suffix))
     ) {
+      const { OFF_LOAD } = env(c) as { OFF_LOAD: string }
+      const offloadUrl = OFF_LOAD || 'https://offload.tnktok.com'
+
       if (videoInfo.video.duration > 0) {
         if ((hq || 'false').toLowerCase() == 'true' || url.hostname.includes('hq.')) {
           return new Response('', {
             status: 302,
             headers: {
-              Location: 'https://fxtiktok-rewrite.dargy.workers.dev/generate/video/' + videoInfo.id + '?hq=true'
+              Location: offloadUrl + '/generate/video/' + videoInfo.id + '?hq=true'
             }
           })
         } else {
           return new Response('', {
             status: 302,
             headers: {
-              Location: 'https://fxtiktok-rewrite.dargy.workers.dev/generate/video/' + videoInfo.id
+              Location: offloadUrl + '/generate/video/' + videoInfo.id
             }
           })
         }
@@ -123,7 +127,7 @@ async function handleVideo(c: any): Promise<Response> {
         return new Response('', {
           status: 302,
           headers: {
-            Location: 'https://fxtiktok-rewrite.dargy.workers.dev/generate/image/' + videoInfo.id
+            Location: offloadUrl + '/generate/image/' + videoInfo.id
           }
         })
       }
@@ -196,146 +200,10 @@ async function handleLive(c: any): Promise<Response> {
   }
 }
 
-app.get('/generate/alternate', (c) => {
-  const content = JSON.stringify(generateAlternate(c))
-  return new Response(content, {
-    status: 200,
-    headers: {
-      'Content-Type': 'application/json; charset=utf-8',
-      'Cache-Control': 'public, max-age=3600'
-    }
-  })
-})
+app.get('/api/v1/statuses/:videoId', async (c) => respondAlternative(c))
+app.get('/users/:username/statuses/:videoId', async (c) => respondAlternative(c));
 
-app.get('/generate/video/:videoId', async (c) => {
-  const { videoId } = c.req.param()
-  const hq = c.req.query('hq') === 'true' || c.req.query('quality') === 'hq'
-
-  try {
-    // To ensure the video is valid, decrease load on TikWM by checking the video data first
-    const data = await scrapeVideoData(videoId)
-
-    if (data instanceof Error) {
-      return new Response((data as Error).message, {
-        status: 500,
-        headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate'
-        }
-      })
-    }
-
-    const highAvailable = data.video.bitrateInfo.find((bitrate) => bitrate.CodecType.includes('h265'))
-
-    if (hq && highAvailable) {
-      return c.redirect(`https://tikwm.com/video/media/hdplay/${videoId}.mp4`)
-    } else {
-      return c.redirect(`https://tikwm.com/video/media/play/${videoId}.mp4`)
-    }
-  } catch (e) {
-    return new Response((e as Error).message, {
-      status: 500,
-      headers: {
-        'Cache-Control': 'no-cache, no-store, must-revalidate'
-      }
-    })
-  }
-})
-
-app.get('/generate/image/:videoId', async (c) => {
-  const { videoId } = c.req.param()
-  const index = c.req.query('index') || 0
-
-  if (!videoId) return new Response('Missing video ID', { status: 400 })
-  if (!awemeIdPattern.test(videoId)) return new Response('Invalid video ID', { status: 400 })
-  if (isNaN(Number(index))) return new Response('Invalid image index', { status: 400 })
-
-  try {
-    const data = await scrapeVideoData(videoId)
-
-    if ('imagePost' in data && data.imagePost.images.length > 0 && +index < data.imagePost.images.length) {
-      return c.redirect(data.imagePost.images[+index].imageURL.urlList[0])
-    } else {
-      throw new Error('Image not found')
-    }
-  } catch (e) {
-    return new Response((e as Error).message, {
-      status: 500,
-      headers: {
-        'Cache-Control': 'no-cache, no-store, must-revalidate'
-      }
-    })
-  }
-})
-
-app.get('/generate/image/:videoId/:imageCount', async (c) => {
-  const { videoId, imageCount } = c.req.param()
-
-  if (!videoId) return new Response('Missing video ID', { status: 400 })
-  if (!awemeIdPattern.test(videoId)) return new Response('Invalid video ID', { status: 400 })
-
-  if (isNaN(Number(imageCount)) || parseInt(imageCount) < 1) return new Response('Invalid image count', { status: 400 })
-  const imageIndex = parseInt(imageCount) - 1 // 0-indexed
-
-  try {
-    const data = await scrapeVideoData(videoId)
-
-    if (data instanceof Error) {
-      return new Response((data as Error).message, {
-        status: 500,
-        headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate'
-        }
-      })
-    }
-
-    const images = await fetch('https://tikwm.com/api/', {
-      headers: {
-        Accept: 'application/json, text/javascript, */*; q=0.01',
-        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-      },
-      body: 'url=' + videoId + '&count=12&cursor=0&web=1&hd=1',
-      method: 'POST'
-    })
-
-    const imageJson = (await images.json()) as { data: { images: string[] } }
-    if (!imageJson.data.images[imageIndex]) return new Response('Image not found', { status: 404 })
-
-    return c.redirect(imageJson.data.images[imageIndex])
-  } catch (e) {
-    return new Response((e as Error).message, {
-      status: 500,
-      headers: {
-        'Cache-Control': 'no-cache, no-store, must-revalidate'
-      }
-    })
-  }
-})
-
-app.get('/generate/livePic/:author', async (c) => {
-  const { author } = c.req.param()
-
-  try {
-    const data = await scrapeLiveData(author)
-
-    if (data instanceof Error) {
-      return new Response((data as Error).message, {
-        status: 500,
-        headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate'
-        }
-      })
-    }
-
-    return c.redirect(data.liveRoomUserInfo.user.avatarLarger)
-  } catch (e) {
-    return new Response((e as Error).message, {
-      status: 500,
-      headers: {
-        'Cache-Control': 'no-cache, no-store, must-revalidate'
-      }
-    })
-  }
-})
+app.route('/generate', generate)
 
 const routes = [
   {

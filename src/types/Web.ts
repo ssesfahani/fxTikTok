@@ -1,3 +1,5 @@
+// this is all auto-generated, this is only because im lazy and want types for tiktok hydration
+// uhh, probably some things repeated, ig.. TODO: clean up
 export interface WebJSONResponse {
   __DEFAULT_SCOPE__: DefaultScope
 }
@@ -7,6 +9,7 @@ export interface DefaultScope {
   'webapp.biz-context': WebappBizContext
   'webapp.i18n-translation': WebappI18nTranslation
   'seo.abtest': SeoAbtest
+  'webapp.user-detail': WebappUserDetail
   'webapp.browserRedirect-context': WebappBrowserRedirectContext
   'webapp.video-detail'?: WebappVideoDetail
   'webapp.a-b': WebappAB
@@ -3125,4 +3128,102 @@ export interface ShareMeta {
 
 export interface WebappAB {
   b_c: string
+}
+
+export interface WebappUserDetail {
+    userInfo:   UserInfo;
+    shareMeta:  ShareMeta;
+    statusCode: number;
+    statusMsg:  string;
+    needFix:    boolean;
+}
+
+export interface ShareMeta {
+    title: string;
+    desc:  string;
+}
+
+export interface UserInfo {
+    user:     DetailUser;
+    stats:    Stats;
+    statsV2:  StatsV2;
+    itemList: any[];
+}
+
+export interface Stats {
+    followerCount:  number;
+    followingCount: number;
+    heart:          number;
+    heartCount:     number;
+    videoCount:     number;
+    diggCount:      number;
+    friendCount:    number;
+}
+
+export interface StatsV2 {
+    followerCount:  string;
+    followingCount: string;
+    heart:          string;
+    heartCount:     string;
+    videoCount:     string;
+    diggCount:      string;
+    friendCount:    string;
+}
+
+export interface DetailUser {
+    id:                     string;
+    shortId:                string;
+    uniqueId:               string;
+    nickname:               string;
+    avatarLarger:           string;
+    avatarMedium:           string;
+    avatarThumb:            string;
+    signature:              string;
+    createTime:             number;
+    verified:               boolean;
+    secUid:                 string;
+    ftc:                    boolean;
+    relation:               number;
+    openFavorite:           boolean;
+    bioLink:                BioLink;
+    commentSetting:         number;
+    commerceUserInfo:       CommerceUserInfo;
+    duetSetting:            number;
+    stitchSetting:          number;
+    privateAccount:         boolean;
+    secret:                 boolean;
+    isADVirtual:            boolean;
+    roomId:                 string;
+    uniqueIdModifyTime:     number;
+    ttSeller:               boolean;
+    region:                 string;
+    downloadSetting:        number;
+    profileTab:             ProfileTab;
+    followingVisibility:    number;
+    recommendReason:        string;
+    nowInvitationCardUrl:   string;
+    nickNameModifyTime:     number;
+    isEmbedBanned:          boolean;
+    canExpPlaylist:         boolean;
+    profileEmbedPermission: number;
+    language:               string;
+    eventList:              any[];
+    suggestAccountBind:     boolean;
+    isOrganization:         number;
+    UserStoryStatus:        number;
+}
+
+export interface BioLink {
+    link: string;
+    risk: number;
+}
+
+export interface CommerceUserInfo {
+    commerceUser: boolean;
+}
+
+export interface ProfileTab {
+    showMusicTab:    boolean;
+    showQuestionTab: boolean;
+    showPlayListTab: boolean;
 }

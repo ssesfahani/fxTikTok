@@ -1,11 +1,14 @@
 import MetaHelper from '../../util/metaHelper'
 import { ItemStruct } from '../../types/Web'
 import { formatNumber } from '../../util/format'
-import { Buffer } from 'node:buffer'
 import { Context } from 'hono'
+import { env } from 'hono/adapter'
 
 export function VideoResponse(data: ItemStruct, addDesc: Boolean, hq: boolean, c: Context): JSX.Element {
-  let videoUrl = 'https://fxtiktok-rewrite.dargy.workers.dev/generate/video/' + data.id + (hq ? '?hq=true' : '')
+  const { OFF_LOAD } = env(c) as { OFF_LOAD: string }
+  const offloadUrl = OFF_LOAD || 'https://offload.tnktok.com'
+  
+  let videoUrl = offloadUrl + '/generate/video/' + data.id + (hq ? '?hq=true' : '')
   let videoMeta: { name: string; content: string }[] = []
 
   if (data.video.duration !== 0) {
@@ -69,10 +72,9 @@ export function VideoResponse(data: ItemStruct, addDesc: Boolean, hq: boolean, c
 
     for (let i = 0; i < numberOfImages; i++) {
       videoMeta = [
-        ...videoMeta,
-        {
+        ...videoMeta,        {
           name: 'og:image',
-          content: 'https://fxtiktok-rewrite.dargy.workers.dev/generate/image/' + data.id + '?index=' + i
+          content: offloadUrl + '/generate/image/' + data.id + '?index=' + i
         },
         {
           name: 'og:image:type',
@@ -113,6 +115,10 @@ export function VideoResponse(data: ItemStruct, addDesc: Boolean, hq: boolean, c
       {MetaHelper(c,
         [
           {
+            name: "og:site_name",
+            content: "fxTikTok"
+          },
+          {
             name: 'og:title',
             content: title.trim()
           },
@@ -149,8 +155,9 @@ export function VideoResponse(data: ItemStruct, addDesc: Boolean, hq: boolean, c
         {
           unique_id: data.author.uniqueId,
           nickname: data.author.nickname,
-          ...(addDesc ? { description: Buffer.from(data.desc).toString('base64') } : {})
-        }
+          ...(addDesc ? { description: Buffer.from(data.desc, 'utf-8').toString('base64') } : {})
+        },
+        data.id
       )}
     </>
   )

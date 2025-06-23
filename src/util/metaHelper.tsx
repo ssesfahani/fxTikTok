@@ -9,10 +9,11 @@ export default function MetaHelper(
   }[],
   alternate?: {
     [key: string]: string | number
-  }
+  },
+  awemeId?: string
 ): JSX.Element {
-  const { OFFLOAD_URL } = env(c) as { OFFLOAD_URL: string }
-  let alternateUrl = new URL(OFFLOAD_URL || 'https://offload.tnktok.com' + '/generate/alternate')
+  const { OFF_LOAD } = env(c) as { OFF_LOAD: string }
+  let alternateUrl = new URL((OFF_LOAD || 'https://offload.tnktok.com') + '/generate/alternate')
 
   if (alternate) {
     for (const key in alternate) {
@@ -24,7 +25,14 @@ export default function MetaHelper(
     <html lang='en'>
       <head>
         {tags.map((tag) => (tag.content ? <meta property={tag.name} content={tag.content} /> : null))}
-        {alternate ? <link rel='alternate' href={alternateUrl.toString().replace("&amp;", "&")} type='application/json+oembed' /> : null}
+        {alternate ? <link rel='alternate' href={alternateUrl.toString()} type='application/json+oembed' /> : null}
+        {awemeId ? <link
+          rel='alternate'
+          type='application/activity+json'
+          href={
+            (OFF_LOAD || 'https://offload.tnktok.com') + '/users/' + 'username' + '/statuses/' + awemeId
+          }
+        /> : null}
       </head>
     </html>
   )
