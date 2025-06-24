@@ -7,10 +7,11 @@ import { env } from 'hono/adapter'
 export function VideoResponse(data: ItemStruct, addDesc: Boolean, hq: boolean, c: Context): JSX.Element {
   const { OFF_LOAD } = env(c) as { OFF_LOAD: string }
   const offloadUrl = OFF_LOAD || 'https://offload.tnktok.com'
-  
+
   let videoUrl = offloadUrl + '/generate/video/' + data.id + (hq ? '?hq=true' : '')
   let videoMeta: { name: string; content: string }[] = []
 
+  // getting media
   if (data.video.duration !== 0) {
     videoMeta = [
       {
@@ -157,7 +158,8 @@ export function VideoResponse(data: ItemStruct, addDesc: Boolean, hq: boolean, c
           nickname: data.author.nickname,
           ...(addDesc ? { description: Buffer.from(data.desc, 'utf-8').toString('base64') } : {})
         },
-        data.id
+        data.id,
+        hq 
       )}
     </>
   )

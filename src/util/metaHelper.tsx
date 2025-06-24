@@ -10,7 +10,8 @@ export default function MetaHelper(
   alternate?: {
     [key: string]: string | number
   },
-  awemeId?: string
+  awemeId?: string,
+  hq?: boolean
 ): JSX.Element {
   const { OFF_LOAD } = env(c) as { OFF_LOAD: string }
   let alternateUrl = new URL((OFF_LOAD || 'https://offload.tnktok.com') + '/generate/alternate')
@@ -30,7 +31,7 @@ export default function MetaHelper(
           rel='alternate'
           type='application/activity+json'
           href={
-            (OFF_LOAD || 'https://offload.tnktok.com') + '/users/' + 'username' + '/statuses/' + awemeId
+            (OFF_LOAD || 'https://offload.tnktok.com') + '/users/' + 'username' + '/statuses/' + awemeId + (hq ? '?hq=true' : '')
           }
         /> : null}
       </head>

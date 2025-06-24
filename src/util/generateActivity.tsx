@@ -3,7 +3,7 @@ import { Context } from 'hono'
 import { formatNumber } from './format';
 import { env } from 'hono/adapter';
 
-export default async function generateActivity(videoId: string, c: Context) {
+export default async function generateActivity(videoId: string, c: Context, hq: boolean) {
     const { OFF_LOAD } = env(c) as { OFF_LOAD: string }
     const offloadUrl = OFF_LOAD || 'https://offload.tnktok.com'
     
@@ -18,7 +18,7 @@ export default async function generateActivity(videoId: string, c: Context) {
         media.push({
           "id": videoId + "-video",
           "type": "video",
-          "url": offloadUrl + "/generate/video/" + videoId,
+          "url": offloadUrl + "/generate/video/" + videoId + (hq ? '?hq=true' : ''),
           "preview_url": offloadUrl + "/generate/cover/" + videoId,
           "remote_url": null,
           "preview_remote_url": null,
