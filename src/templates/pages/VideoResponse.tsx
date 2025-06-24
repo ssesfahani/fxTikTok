@@ -1,10 +1,9 @@
 import MetaHelper from '../../util/metaHelper'
 import { ItemStruct } from '../../types/Web'
-import { formatNumber } from '../../util/format'
 import { Context } from 'hono'
 import { env } from 'hono/adapter'
 
-export function VideoResponse(data: ItemStruct, addDesc: Boolean, hq: boolean, c: Context): JSX.Element {
+export function VideoResponse(data: ItemStruct, addDesc: boolean, hq: boolean, c: Context): JSX.Element {
   const { OFF_LOAD } = env(c) as { OFF_LOAD: string }
   const offloadUrl = OFF_LOAD || 'https://offload.tnktok.com'
 
@@ -101,16 +100,6 @@ export function VideoResponse(data: ItemStruct, addDesc: Boolean, hq: boolean, c
     }
   }
 
-  let title = ''
-
-  title += `❤️ ${formatNumber(data.stats.diggCount.toString())} `
-  title += `💬 ${formatNumber(data.stats.commentCount.toString())}  `
-  title += `🔁 ${formatNumber(data.stats.shareCount.toString())}  `
-
-  if (data.imagePost) {
-    title += `🖼️ ${data.imagePost.images.length.toString()} `
-  }
-
   return (
     <>
       {MetaHelper(c,
@@ -121,7 +110,7 @@ export function VideoResponse(data: ItemStruct, addDesc: Boolean, hq: boolean, c
           },
           {
             name: 'og:title',
-            content: title.trim()
+            content: `${data.author.nickname} (@${data.author.uniqueId})`
           },
           {
             name: 'theme-color',
@@ -159,7 +148,8 @@ export function VideoResponse(data: ItemStruct, addDesc: Boolean, hq: boolean, c
           ...(addDesc ? { description: Buffer.from(data.desc, 'utf-8').toString('base64') } : {})
         },
         data.id,
-        hq 
+        hq,
+        addDesc
       )}
     </>
   )

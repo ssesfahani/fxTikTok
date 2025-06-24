@@ -3,16 +3,21 @@ import { Context } from 'hono'
 import { formatNumber } from './format';
 import { env } from 'hono/adapter';
 
-export default async function generateActivity(videoId: string, c: Context, hq: boolean) {
+export default async function generateActivity(param: string, c: Context) {
     const { OFF_LOAD } = env(c) as { OFF_LOAD: string }
     const offloadUrl = OFF_LOAD || 'https://offload.tnktok.com'
     
+    const videoId = param.replace(/[^0-9]/g, '')
+    const hq = param.includes('hq')
+    const forceDescription = param.includes('desc')
+
     const videoInfo = await scrapeVideoData(videoId)
     if (videoInfo instanceof Error) return {
         "error": videoInfo.message
     }
     
     let media = []
+    let desc = videoInfo.desc + "<br><br>"
 
     if (videoInfo.video.playAddr) {
         media.push({
@@ -31,6 +36,8 @@ export default async function generateActivity(videoId: string, c: Context, hq: 
             }
           }
         })
+
+        if (!forceDescription) desc = "" // Clear description if video and not forced to add it, for aesthetic purposes
     }
 
     if (videoInfo.imagePost && videoInfo.imagePost.images.length > 0) {
@@ -43,7 +50,7 @@ export default async function generateActivity(videoId: string, c: Context, hq: 
                 "remote_url": null,
                 "preview_remote_url": null,
                 "text_url": null,
-                "description": null,
+                "description": "Image (" + (i + 1) + " of " + videoInfo.imagePost.images.length + ")",
                 "meta": {
                     "original": {
                         "width": videoInfo.imagePost.images[i].imageWidth,
@@ -59,7 +66,7 @@ export default async function generateActivity(videoId: string, c: Context, hq: 
       "url": "https://tiktok.com/@" + videoInfo.author.uniqueId + "/video/" + videoId,
       "uri": "https://tiktok.com/@" + videoInfo.author.uniqueId + "/video/" + videoId,
       "created_at": new Date(parseInt(videoInfo.createTime) * 1000).toISOString(),
-      "content": videoInfo.desc + "<br><br><b>❤️ " + formatNumber(videoInfo.stats.diggCount) + " 💬 " + formatNumber(videoInfo.stats.commentCount) + " 🔁 " + formatNumber(videoInfo.stats.shareCount) + "</b>",
+      "content": desc + "<b>❤️ " + formatNumber(videoInfo.stats.diggCount) + " 💬 " + formatNumber(videoInfo.stats.commentCount) + " 🔁 " + formatNumber(videoInfo.stats.shareCount) + "</b>",
       "spoiler_text": "",
       "language": null,
       "visibility": "public",
@@ -80,12 +87,20 @@ export default async function generateActivity(videoId: string, c: Context, hq: 
         "locked": false,
         "bot": false,
         "discoverable": true,
-        "indexable": true,
+        "indexable": false,
         "group": false,
         "avatar": offloadUrl + "/generate/pfp/" + videoInfo.author.uniqueId,
         "avatar_static": offloadUrl + "/generate/pfp/" + videoInfo.author.uniqueId,
         "followers_count": videoInfo.stats.followerCount,
         "following_count": videoInfo.stats.followingCount,
+        "header": null,
+        "header_static": null,
+        "statuses_count": 0,
+        "hide_collections": false,
+        "noindex": false,
+        "emojis": [],
+        "roles": [],
+        "fields": []
       },
       "mentions": [],
       "tags": [],

@@ -22,9 +22,8 @@ app.get('/', () => {
 
 app.get('/api/v1/statuses/:videoId', async (c) => {
   const { videoId } = c.req.param()
-  const hq = c.req.query('hq') === 'true' || c.req.query('quality') === 'hq'
 
-  const content = JSON.stringify(await generateActivity(videoId, c, hq))
+  const content = JSON.stringify(await generateActivity(videoId, c))
   return new Response(content, {
     status: 200,
     headers: {
