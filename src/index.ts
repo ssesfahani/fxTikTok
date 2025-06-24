@@ -197,6 +197,11 @@ async function handleLive(c: any): Promise<Response> {
   }
 }
 
+app.get('/api/v1/statuses/:videoId', async (c) => respondAlternative(c))
+app.get('/users/:username/statuses/:videoId', async (c) => respondAlternative(c));
+
+app.route('/generate', generate)
+
 const routes = [
   {
     path: '/:videoId',
@@ -225,10 +230,5 @@ routes.forEach((route) => {
   app.get(route.path, route.handler)
   app.get(route.path + '/', route.handler)
 })
-
-app.get('/api/v1/statuses/:videoId', async (c) => respondAlternative(c))
-app.get('/users/:username/statuses/:videoId', async (c) => respondAlternative(c));
-
-app.route('/generate', generate)
 
 export default app

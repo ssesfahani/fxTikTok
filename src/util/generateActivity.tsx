@@ -19,7 +19,7 @@ export default async function generateActivity(videoId: string, c: Context) {
           "id": videoId + "-video",
           "type": "video",
           "url": offloadUrl + "/generate/video/" + videoId,
-          "preview_url": "https://tikwm.com/video/cover/" + videoId + ".webp",
+          "preview_url": offloadUrl + "/generate/cover/" + videoId,
           "remote_url": null,
           "preview_remote_url": null,
           "text_url": null,

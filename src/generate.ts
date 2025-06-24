@@ -112,19 +112,27 @@ generate.get('/image/:videoId/:imageCount', async (c) => {
       })
     }
 
-    const images = await fetch('https://tikwm.com/api/', {
-      headers: {
-        Accept: 'application/json, text/javascript, */*; q=0.01',
-        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-      },
-      body: 'url=' + videoId + '&count=12&cursor=0&web=1&hd=1',
-      method: 'POST'
-    })
+    if (data.imagePost && data.imagePost.images && data.imagePost.images.length > 0) {
+      if (imageIndex >= data.imagePost.images.length) {
+        return new Response('Image index out of range', { status: 404 })
+      }
+      
+      const imageUrl = data.imagePost.images[imageIndex].imageURL.urlList[0]
+      return c.redirect(imageUrl)
+    } else { // Fallback to TikWM API if no images found in data
+      const images = await fetch('https://tikwm.com/api/', {
+        headers: {
+          Accept: 'application/json, text/javascript, */*; q=0.01',
+          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+        },
+        body: 'url=' + videoId + '&count=12&cursor=0&web=1&hd=1',
+        method: 'POST'
+      })
 
-    const imageJson = (await images.json()) as { data: { images: string[] } }
-    if (!imageJson.data.images[imageIndex]) return new Response('Image not found', { status: 404 })
-
-    return c.redirect(imageJson.data.images[imageIndex])
+      const imageJson = (await images.json()) as { data: { images: string[] } }
+      if (!imageJson.data.images[imageIndex]) return new Response('Image not found', { status: 404 })
+      return c.redirect(imageJson.data.images[imageIndex])
+    }
   } catch (e) {
     console.log(e)
     return new Response((e as Error).message, {
@@ -152,6 +160,39 @@ generate.get('/pfp/:author', async (c) => {
     }
 
     return c.redirect(data)
+  } catch (e) {
+    return new Response((e as Error).message, {
+      status: 500,
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate'
+      }
+    })
+  }
+})
+
+generate.get('/cover/:videoId', async (c) => {
+  const { videoId } = c.req.param()
+
+  if (!videoId) return new Response('Missing video ID', { status: 400 })
+  if (!awemeIdPattern.test(videoId)) return new Response('Invalid video ID', { status: 400 })
+
+  try {
+    const data = await scrapeVideoData(videoId)
+
+    if (data instanceof Error) {
+      return new Response((data as Error).message, {
+        status: 500,
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate'
+        }
+      })
+    }
+
+    if (data.video.cover) {
+      return c.redirect(data.video.originCover)
+    } else {
+      throw new Error('Cover not found')
+    }
   } catch (e) {
     return new Response((e as Error).message, {
       status: 500,
