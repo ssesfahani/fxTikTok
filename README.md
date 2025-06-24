@@ -2,8 +2,6 @@
 
 Embed TikTok videos and slideshows on Discord with just `s/i/n`
 
-[![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/okdargy/fxtiktok)
-
 ## 📸 Screenshots
 
 <details>
@@ -105,3 +103,26 @@ We check all the boxes for being one of the best TikTok embedding services with 
 [txkc]: https://github.com/Britmoji/tiktxk/commits
 [vxt]: https://img.shields.io/github/last-commit/dylanpdx/vxtiktok?label
 [vxtc]: https://github.com/dylanpdx/vxtiktok/commits
+
+### 💻 Selfhosting
+
+By default, when setting up a new fxTikTok instance, the default offload server is `offload.tnktok.com`.
+To setup your own, just compile and run [`offload.ts`](https://github.com/okdargy/fxTikTok/blob/hono-rewrite/src/offload.ts) which will start on port **8787**.
+
+```bash
+# Install all necessary dependencies
+pnpm install
+# Start your server
+bun run src/offload.ts
+```
+> I recommend configuring this to your own domain alongside a reverse proxy like [nginx](https://nginx.org) and on top of Cloudflare with protection on.
+
+Next, deploy your Worker with the button below and follow the instructions.
+
+[![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/okdargy/fxtiktok)
+
+Once done, go to "Settings" and change your offload server under "Variables and Secrets":
+
+<img src=".github/readme/settings.png" alt="Settings Page, showing where to click to change your Offload Server" height="300px" style="border-radius:2%" />
+
+#### 🎉 That's it! You now have your own fxTikTok instance to use whenever, wherever you like.
