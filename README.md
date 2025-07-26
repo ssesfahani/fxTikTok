@@ -2,24 +2,23 @@
 
 Embed TikTok videos and slideshows on Discord with just `s/i/n`
 
+> [!NOTE]  
+> Have a feature you want to see in fxTikTok or want to report a bug? Make an issue! I would love to hear your feedback.
+
 ## 📸 Screenshots
 
 <details>
   <summary>Click here to preview how fxTikTok looks in action</summary>
 
-| <img src="https://raw.githubusercontent.com/okdargy/fxTikTok/master/.github/readme/compare.png" alt="Video Preview" height="400px" /> |
+| <img src="/.github/readme/compare.png" alt="Video Preview" height="400px" /> |
 | :-----------------------------------------------------------------------------------------------------------------------------------: |
 |                                       Comparing `tiktok.com` vs. `tnktok.com` embeds on Discord                                       |
 
-| <img src="https://raw.githubusercontent.com/okdargy/fxTikTok/master/.github/readme/slideshow.png" alt="Slideshow Preview" /> |
+| <img src="/.github/readme/slideshow.png" alt="Slideshow Preview" /> |
 | :--------------------------------------------------------------------------------------------------------------------------: |
 |                                                       Slideshow embeds                                                       |
 
-| <img src="https://raw.githubusercontent.com/okdargy/fxTikTok/master/.github/readme/live.png" alt="Live Preview" /> |
-| :----------------------------------------------------------------------------------------------------------------: |
-|                                                 Live video embeds                                                  |
-
-| <img src="https://raw.githubusercontent.com/okdargy/fxTikTok/master/.github/readme/direct.png" alt="Direct Preview" height="400px" /> |
+| <img src="/.github/readme/direct.png" alt="Direct Preview" height="400px" /> |
 | :-----------------------------------------------------------------------------------------------------------------------------------: |
 |                                                      Direct image/video support                                                       |
 
@@ -42,6 +41,9 @@ When you send `s/i/n` in Discord, it modifies your most recent message using the
 |     Before     |     After      |
 | :------------: | :------------: |
 | t**i**ktok.com | t**n**ktok.com |
+
+> [!TIP]
+> If you run a Discord server, I highly recommend adding [FixTweetBot](https://github.com/Kyrela/FixTweetBot) to your server. It automatically modifies links to use embed fixers like fxTikTok, and is highly customizable.
 
 ### Using Direct Embeds
 
@@ -84,30 +86,31 @@ You can combine different modes by using specific hostnames or URL query paramet
 
 We check all the boxes for being one of the best TikTok embedding services with many features that others don't have. Here's a table comparing our service, tnktok.com, with the other TikTok embedding services as well as TikTok's default embeds.
 
-|                                        | [tnktok.com](https://www.tnktok.com) | Default TikTok | [tiktxk.com](https://tiktxk.com) | [vxtiktok.com](https://vxtiktok.com) | [tfxktok.com](https://tfxktok.com) |
-| -------------------------------------- | ------------------------------------ | -------------- | -------------------------------- | ------------------------------------ | ---------------------------------- |
-| Embed playable videos                  | ☑️                                   | ☑️             | ❔                               | ☑️                                   | ☑️                                 |
-| Embed multi-image slideshows           | ☑️                                   | ❌             | ❔                               | ❌                                   | ☑️                                 |
-| Embed lives                            | ☑️                                   | ➖             | ❌                               | ❌                                   | ☑️                                 |
-| Open source                            | ☑️                                   | ❌             | ☑️                               | ☑️                                   | ❌                                 |
-| Supports direct embeds                 | ☑️                                   | ❌             | ❌                               | ❌                                   | ❌                                 |
-| Shows like, shares, comments           | ☑️                                   | ☑️             | ➖                               | ☑️                                   | ☑️                                 |
-| Removes tracking for redirects         | ☑️                                   | ❌             | ☑️                               | ☑️                                   | ☑️                                 |
-| Support for multi-continent short URLs | ☑️                                   | ☑️             | ☑️                               | ☑️                                   | ❌                                 |
-| Support for h265/high quality          | ☑️                                   | ❌             | ❔                               | ❌                                   | ❌                                 |
-| Last commit                            | [![][tnk]][tnkc]                     | N/A            | [![][txk]][txkc]                 | [![][vxt]][vxtc]                     | N/A                                |
+|                                        | [fxTikTok](https://www.tnktok.com) | Default TikTok | [kkScript](https://kktiktok.com/) | [tfxktok.com](https://tfxktok.com) | [EmbedEZ](https://tiktokez.com) |
+|----------------------------------------|------------------------------------|----------------|-----------------------------------|------------------------------------|---------------------------------|
+| Embed playable videos                  | ☑️                                  | ☑️              | ☑️                                 | ☑️                                  | ☑️                               |
+| Embed multi-image slideshows           | ☑️                                  | ❌              | ❌                                 | ☑️                                  | ☑️                               |
+| Open source                            | ☑️                                  | ❌              | ❔                                 | ❌                                  | ❌                               |
+| Supports direct embeds                 | ☑️                                  | ❌              | ❔                                 | ❌                                  | ❌                               |
+| Shows like, shares, comments           | ☑️                                  | ☑️              | ❌                                 | ☑️                                  | ☑️                               |
+| Removes tracking for redirects         | ☑️                                  | ❌              | ❌                                 | ☑️                                  | ☑️                               |
+| Support for multi-continent short URLs | ☑️                                  | ☑️              | ❌                                 | ❌                                  | ☑️                               |
+| Support for h265/high quality          | ☑️                                  | ❌              | ❌                                 | ❌                                  | ❌                               |
+| Last commit                            | [![][tnk]][tnkc]                   | N/A            | [![][kkt]][kktc]                  | N/A                                | N/A                             |
 
 [tnk]: https://img.shields.io/github/last-commit/okdargy/fxTikTok?label
 [tnkc]: https://github.com/okdargy/fxTikTok/commits
-[txk]: https://img.shields.io/github/last-commit/Britmoji/tiktxk?label
-[txkc]: https://github.com/Britmoji/tiktxk/commits
-[vxt]: https://img.shields.io/github/last-commit/dylanpdx/vxtiktok?label
-[vxtc]: https://github.com/dylanpdx/vxtiktok/commits
+[kkt]: https://img.shields.io/github/last-commit/kkscript/kk?label
+[kktc]: https://github.com/kkscript/kk/commits
 
-### 💻 Selfhosting
+The following embed services are not listed due to being unmaintained or simply not working:
+- [tiktxk.com](https://tiktxk.com)
+- [vxtiktok.com](https://vxtiktok.com) (redirecting to kkScript)
+
+## 💻 Selfhosting
 
 By default, when setting up a new fxTikTok instance, the default offload server is `offload.tnktok.com`.
-To setup your own, just compile and run [`offload.ts`](https://github.com/okdargy/fxTikTok/blob/hono-rewrite/src/offload.ts) which will start on port **8787**.
+To setup your own, just compile and run [`offload.ts`](/src/offload.ts) which will start on port **8787**.
 
 ```bash
 # Install all necessary dependencies
