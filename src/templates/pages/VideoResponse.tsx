@@ -72,7 +72,8 @@ export function VideoResponse(data: ItemStruct, addDesc: boolean, hq: boolean, c
 
     for (let i = 0; i < numberOfImages; i++) {
       videoMeta = [
-        ...videoMeta,        {
+        ...videoMeta,
+        {
           name: 'og:image',
           content: offloadUrl + '/generate/image/' + data.id + '?index=' + i
         },
@@ -102,11 +103,12 @@ export function VideoResponse(data: ItemStruct, addDesc: boolean, hq: boolean, c
 
   return (
     <>
-      {MetaHelper(c,
+      {MetaHelper(
+        c,
         [
           {
-            name: "og:site_name",
-            content: "fxTikTok"
+            name: 'og:site_name',
+            content: 'fxTikTok'
           },
           {
             name: 'og:title',

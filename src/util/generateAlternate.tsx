@@ -14,9 +14,7 @@ export default function generateAlternate(c: Context): {
 
   const decodedDescription = description
     ? decodeURIComponent(
-        new TextDecoder('utf-8').decode(
-          Uint8Array.from(atob(decodeURIComponent(description)), (c) => c.charCodeAt(0))
-        )
+        new TextDecoder('utf-8').decode(Uint8Array.from(atob(decodeURIComponent(description)), (c) => c.charCodeAt(0)))
       )
     : ''
 

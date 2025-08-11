@@ -198,7 +198,7 @@ async function handleLive(c: any): Promise<Response> {
 }
 
 app.get('/api/v1/statuses/:videoId', async (c) => respondAlternative(c))
-app.get('/users/:username/statuses/:videoId', async (c) => respondAlternative(c));
+app.get('/users/:username/statuses/:videoId', async (c) => respondAlternative(c))
 
 app.route('/generate', generate)
 

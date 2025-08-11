@@ -1,11 +1,11 @@
-import { Context, Hono } from "hono";
-export const generate = new Hono();
+import { Context, Hono } from 'hono'
+export const generate = new Hono()
 
 import generateAlternate from './util/generateAlternate'
-import generateActivity from "./util/generateActivity";
-import { scrapeAvatarUri, scrapeVideoData } from "./services/tiktok";
+import generateActivity from './util/generateActivity'
+import { scrapeAvatarUri, scrapeVideoData } from './services/tiktok'
 
-export const awemeIdPattern = /^\d{1,19}$/;
+export const awemeIdPattern = /^\d{1,19}$/
 export const awemeLinkPattern = /\/@?([\w\d_.]*)\/(video|photo|live)\/?(\d{19})?/
 
 export async function respondAlternative(c: Context) {
@@ -117,10 +117,11 @@ generate.get('/image/:videoId/:imageCount', async (c) => {
       if (imageIndex >= data.imagePost.images.length) {
         return new Response('Image index out of range', { status: 404 })
       }
-      
+
       const imageUrl = data.imagePost.images[imageIndex].imageURL.urlList[0]
       return c.redirect(imageUrl)
-    } else { // Fallback to TikWM API if no images found in data
+    } else {
+      // Fallback to TikWM API if no images found in data
       const images = await fetch('https://tikwm.com/api/', {
         headers: {
           Accept: 'application/json, text/javascript, */*; q=0.01',

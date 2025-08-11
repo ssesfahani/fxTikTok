@@ -7,17 +7,20 @@ const PORT = 8787
 const firstStart = Date.now()
 
 app.get('/', () => {
-    return new Response(JSON.stringify({
-        message: "fxTikTok offload server is running!",
-        github: "https://github.com/okdargy/fxTikTok",
-        uptime: Date.now() - firstStart,
-    }), {
-        status: 200,
-        headers: {
-            'Content-Type': 'application/json; charset=utf-8',
-            'Cache-Control': 'public, max-age=3600'
-        }
-    })
+  return new Response(
+    JSON.stringify({
+      message: 'fxTikTok offload server is running!',
+      github: 'https://github.com/okdargy/fxTikTok',
+      uptime: Date.now() - firstStart
+    }),
+    {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Cache-Control': 'public, max-age=3600'
+      }
+    }
+  )
 })
 
 app.get('/api/v1/statuses/:videoId', async (c) => {
@@ -34,13 +37,13 @@ app.get('/api/v1/statuses/:videoId', async (c) => {
 })
 
 app.get('/api/v1/statuses/:videoId', async (c) => respondAlternative(c))
-app.get('/users/:username/statuses/:videoId', async (c) => respondAlternative(c));
+app.get('/users/:username/statuses/:videoId', async (c) => respondAlternative(c))
 
 app.route('/generate', generate)
 
-export default { 
-    port: PORT, 
-    fetch: app.fetch, 
-} 
+export default {
+  port: PORT,
+  fetch: app.fetch
+}
 
 console.log(`fxTikTok offload server is running on port ${PORT}`)
