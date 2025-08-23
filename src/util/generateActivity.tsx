@@ -40,26 +40,31 @@ export default async function generateActivity(param: string, c: Context) {
         if (!forceDescription) desc = "" // Clear description if video and not forced to add it, for aesthetic purposes
     }
 
-    if (videoInfo.imagePost && videoInfo.imagePost.images.length > 0) {
-        for (let i = 0; i < videoInfo.imagePost.images.length; i++) {
-            media.push({
-                "id": videoId + "-image-" + i,
-                "type": "image",
-                "url": offloadUrl + "/generate/image/" + videoId + "/" + (i + 1),
-                "preview_url": offloadUrl + "/generate/image/" + videoId + "/" + (i + 1) + "?preview=true",
-                "remote_url": null,
-                "preview_remote_url": null,
-                "text_url": null,
-                "description": "Image (" + (i + 1) + " of " + videoInfo.imagePost.images.length + ")",
-                "meta": {
-                    "original": {
-                        "width": videoInfo.imagePost.images[i].imageWidth,
-                        "height": videoInfo.imagePost.images[i].imageHeight,
-                    }
-                }
-            });
+  if (videoInfo.imagePost && videoInfo.imagePost.images.length > 0) {
+    const maxImages = 4;
+    const imageCount = Math.min(videoInfo.imagePost.images.length, maxImages);
+    
+    for (let i = 0; i < imageCount; i++) {
+      media.push({
+        "id": videoId + "-image-" + i,
+        "type": "image",
+        "url": offloadUrl + "/generate/image/" + videoId + "/" + (i + 1),
+        "preview_url": offloadUrl + "/generate/image/" + videoId + "/" + (i + 1) + "?preview=true",
+        "remote_url": null,
+        "preview_remote_url": null,
+        "text_url": null,
+        ...(videoInfo.imagePost.images.length > 4 ? {
+          "description": "Image (" + (i + 1) + " of " + videoInfo.imagePost.images.length + ")"
+        } : {}),
+        "meta": {
+          "original": {
+            "width": videoInfo.imagePost.images[i].imageWidth,
+            "height": videoInfo.imagePost.images[i].imageHeight,
+          }
         }
+      });
     }
+  }
 
     return {
       "id": videoId,
