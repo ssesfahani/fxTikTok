@@ -16,9 +16,7 @@ export default function generateAlternate(c: Context): {
     ? (() => {
         try {
           return decodeURIComponent(
-            new TextDecoder('utf-8').decode(
-              Uint8Array.from(atob(decodeURIComponent(description)), (c) => c.charCodeAt(0))
-            )
+            new TextDecoder('utf-8').decode(Uint8Array.from(atob(decodeURIComponent(description)), (c) => c.charCodeAt(0)))
           )
         } catch (error) {
           console.error('Failed to decode description:', error)
@@ -29,8 +27,7 @@ export default function generateAlternate(c: Context): {
 
   // Some Discord embed values are limited to 256 characters, truncate if necessary
   // See more: https://www.pythondiscord.com/pages/guides/python-guides/discord-embed-limits/
-  const truncatedDescription =
-    decodedDescription.length > 256 ? decodedDescription.substring(0, 253) + '...' : decodedDescription
+  const truncatedDescription = decodedDescription.length > 256 ? decodedDescription.substring(0, 253) + '...' : decodedDescription
 
   return {
     version: '1.0',
@@ -38,8 +35,7 @@ export default function generateAlternate(c: Context): {
     author_name: `${decodeURIComponent(nickname)} (@${decodeURIComponent(unique_id)})`,
     author_url: `https://www.tiktok.com${unique_id ? '/@' + unique_id : ''}`,
     provider_name:
-      truncatedDescription ||
-      (showSponsor ? 'Use fxTikTok often? Consider supporting us on GitHub!' : 'fxTikTok - Embed with s/i/n'),
+      truncatedDescription || (showSponsor ? 'Use fxTikTok often? Consider supporting us on GitHub!' : 'fxTikTok - Embed with s/i/n'),
     provider_url: showSponsor ? 'https://github.com/sponsors/okdargy' : 'https://github.com/okdargy/fxTikTok',
     title: `TikTok by @${unique_id}`
   }

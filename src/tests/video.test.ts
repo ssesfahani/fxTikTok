@@ -115,22 +115,28 @@ describe('GET /generate/video/:videoId', () => {
 
 describe('GET /generate/alternate', () => {
   it('should return 200 (English)', async () => {
-    const res = await app.request('/generate/alternate?description=I2Z5ICNmb3J5b3UgI3N0cmF3YmVycnkgI2Nob2NvbGF0ZSAjY2hvY29sYXRlY292ZXJlZHN0cmF3YmVycmllcyA%253D', {
-      method: 'GET'
-    })
+    const res = await app.request(
+      '/generate/alternate?description=I2Z5ICNmb3J5b3UgI3N0cmF3YmVycnkgI2Nob2NvbGF0ZSAjY2hvY29sYXRlY292ZXJlZHN0cmF3YmVycmllcyA%253D',
+      {
+        method: 'GET'
+      }
+    )
 
     expect(res.status).toBe(200)
-    const jsonResponse = await res.json() as { provider_name: string };
+    const jsonResponse = (await res.json()) as { provider_name: string }
     expect(jsonResponse.provider_name).toEqual('#fy #foryou #strawberry #chocolate #chocolatecoveredstrawberries ')
   })
 
   it('should return 200 (Russian)', async () => {
-    const res = await app.request('/generate/alternate?description=0JXRgdGC0Ywg0LIg0LrQvtC80LzQtdC90YLQsNGA0LjRj9GFINC%252F0LXRgNC10LLQvtC00YfQuNC60Lgg0YEg0Y%252FQt9GL0LrQsCDQv9GA0LjRiNC10LvRjNGG0LXQsj8g8J%252BRvSDwn5O5OiBhcmllbGlwaWxsbw%253D%253D', {
-      method: 'GET'
-    })
+    const res = await app.request(
+      '/generate/alternate?description=0JXRgdGC0Ywg0LIg0LrQvtC80LzQtdC90YLQsNGA0LjRj9GFINC%252F0LXRgNC10LLQvtC00YfQuNC60Lgg0YEg0Y%252FQt9GL0LrQsCDQv9GA0LjRiNC10LvRjNGG0LXQsj8g8J%252BRvSDwn5O5OiBhcmllbGlwaWxsbw%253D%253D',
+      {
+        method: 'GET'
+      }
+    )
 
     expect(res.status).toBe(200)
-    const jsonResponse = await res.json() as { provider_name: string };
+    const jsonResponse = (await res.json()) as { provider_name: string }
     expect(jsonResponse.provider_name).toEqual('Есть в комментариях переводчики с языка пришельцев? 👽 📹: arielipillo')
   })
 })
