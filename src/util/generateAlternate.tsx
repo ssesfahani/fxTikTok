@@ -13,11 +13,18 @@ export default function generateAlternate(c: Context): {
   const showSponsor = Math.random() < 0.1 // 1 in 10 chance to show sponsor message, gotta break even somehow
 
   const decodedDescription = description
-    ? decodeURIComponent(
-        new TextDecoder('utf-8').decode(
-          Uint8Array.from(atob(decodeURIComponent(description)), (c) => c.charCodeAt(0))
-        )
-      )
+    ? (() => {
+        try {
+          return decodeURIComponent(
+            new TextDecoder('utf-8').decode(
+              Uint8Array.from(atob(decodeURIComponent(description)), (c) => c.charCodeAt(0))
+            )
+          )
+        } catch (error) {
+          console.error('Failed to decode description:', error)
+          return 'Error decoding description'
+        }
+      })()
     : ''
 
   // Some Discord embed values are limited to 256 characters, truncate if necessary

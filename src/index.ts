@@ -25,8 +25,25 @@ async function handleShort(c: any): Promise<Response> {
   const { videoId } = c.req.param()
   let id = videoId.split('.')[0] // for .mp4, .webp, etc.
 
-  const res = await fetch('https://vm.tiktok.com/' + id)
-  const link = new URL(res.url)
+  const res = await fetch('https://vm.tiktok.com/' + id, {
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (compatible; Discordbot/2.0; +https://discordapp.com)',
+    },
+    cf: {
+      cacheEverything: false,
+      cacheTtlByStatus: { '301-302': 86400, 404: 1, '500-599': 0 }
+    },
+    "redirect": "manual"
+  })
+
+  const location = res.headers.get('Location') || res.headers.get('location')
+
+  if (!location) {
+    const responseContent = await ErrorResponse('No Location header found in response', c)
+    return returnHTMLResponse(responseContent, 500)
+  }
+
+  const link = new URL(location)
 
   // Clean any tracking parameters
   link.search = ''
