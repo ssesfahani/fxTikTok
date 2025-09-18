@@ -25,25 +25,7 @@ async function handleShort(c: any): Promise<Response> {
   const { videoId } = c.req.param()
   let id = videoId.split('.')[0] // for .mp4, .webp, etc.
 
-  const res = await fetch('https://vm.tiktok.com/' + id, {
-    headers: {
-      'User-Agent': 'Mozilla/5.0 (compatible; Discordbot/2.0; +https://discordapp.com)',
-    },
-    cf: {
-      cacheEverything: false,
-      cacheTtlByStatus: { '301-302': 86400, 404: 1, '500-599': 0 }
-    },
-    "redirect": "manual"
-  })
-
-  const location = res.headers.get('Location') || res.headers.get('location')
-
-  if (!location) {
-    const responseContent = await ErrorResponse('No Location header found in response', c)
-    return returnHTMLResponse(responseContent, 500)
-  }
-
-  const link = new URL(location)
+  const link = await grabAwemeId(id)
 
   // Clean any tracking parameters
   link.search = ''
@@ -58,11 +40,17 @@ async function handleShort(c: any): Promise<Response> {
     })
   }
 
-  // Now, we need to check if the video is a livestream or a photo/video
+  // Extract the actual aweme ID from the resolved link
+  let resolvedId = id
   if (link.pathname.includes('/video') || link.pathname.includes('/photo')) {
-    return handleVideo(c)
+    const match = link.pathname.match(awemeLinkPattern)
+    if (match) resolvedId = match[3]
+    return processVideo(c, resolvedId)
   } else if (link.pathname.includes('/live')) {
-    return handleLive(c)
+    const match = link.pathname.match(awemeLinkPattern)
+    let authorName = ''
+    if (match) authorName = match[1]
+    return processLive(c, authorName)
   } else {
     const responseContent = await ErrorResponse('Invalid vm link', c)
     return returnHTMLResponse(responseContent, 400)
@@ -71,8 +59,6 @@ async function handleShort(c: any): Promise<Response> {
 
 async function handleVideo(c: any): Promise<Response> {
   const { videoId } = c.req.param()
-  const { addDesc, hq } = c.req.query()
-
   let id = videoId.split('.')[0] // for .mp4, .webp, etc.
 
   // If the user agent is a bot, redirect to the TikTok page
@@ -91,6 +77,7 @@ async function handleVideo(c: any): Promise<Response> {
   }
 
   if (!awemeIdPattern.test(id)) {
+    console.log(`Aweme ID pattern did not match for ID: ${id}`)
     const url = await grabAwemeId(id)
     const match = url.pathname.match(awemeLinkPattern)
 
@@ -101,6 +88,13 @@ async function handleVideo(c: any): Promise<Response> {
       return returnHTMLResponse(responseContent, 400)
     }
   }
+
+  return processVideo(c, id)
+}
+
+async function processVideo(c: any, id: string): Promise<Response> {
+  if (!id) return new Response('Missing video ID', { status: 400 })
+  const { addDesc, hq } = c.req.query()
 
   try {
     const videoInfo = await scrapeVideoData(id)
@@ -113,11 +107,7 @@ async function handleVideo(c: any): Promise<Response> {
     const url = new URL(c.req.url)
     const extensions = ['mp4', 'png', 'jpg', 'jpeg', 'webp', 'webm']
 
-    if (
-      url.hostname.includes('d.') ||
-      c.req.query('isDirect') === 'true' ||
-      extensions.some((suffix) => c.req.path.endsWith(suffix))
-    ) {
+    if (url.hostname.includes('d.') || c.req.query('isDirect') === 'true' || extensions.some((suffix) => c.req.path.endsWith(suffix))) {
       const { OFF_LOAD } = env(c) as { OFF_LOAD: string }
       const offloadUrl = OFF_LOAD || 'https://offload.tnktok.com'
 
@@ -198,6 +188,10 @@ async function handleLive(c: any): Promise<Response> {
 
   authorName = authorName.startsWith('@') ? authorName.substring(1) : authorName
 
+  return processLive(c, authorName)
+}
+
+async function processLive(c: any, authorName: string): Promise<Response> {
   try {
     const liveData = await scrapeLiveData(authorName)
 
@@ -215,7 +209,7 @@ async function handleLive(c: any): Promise<Response> {
 }
 
 app.get('/api/v1/statuses/:videoId', async (c) => respondAlternative(c))
-app.get('/users/:username/statuses/:videoId', async (c) => respondAlternative(c));
+app.get('/users/:username/statuses/:videoId', async (c) => respondAlternative(c))
 
 app.route('/generate', generate)
 

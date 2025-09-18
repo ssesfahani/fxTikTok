@@ -47,8 +47,19 @@ async function fetchTikTokPage(url: string, cacheOptions?: any): Promise<string>
 }
 
 export async function grabAwemeId(videoId: string): Promise<URL> {
-  const res = await fetch('https://vm.tiktok.com/' + videoId)
-  return new URL(res.url)
+  const res = await fetch('https://vm.tiktok.com/' + videoId, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; Discordbot/2.0; +https://discordapp.com)',
+      },
+      cf: {
+        cacheEverything: false,
+        cacheTtlByStatus: { '301-302': 86400, 404: 1, '500-599': 0 }
+      },
+      "redirect": "manual"
+  })
+  const location = res.headers.get('Location') || res.headers.get('location')
+  if (!location) throw new Error('No Location header found in response')
+  return new URL(location)
 }
 
 export async function scrapeAvatarUri(username: string): Promise<string | Error> {
