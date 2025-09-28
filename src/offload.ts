@@ -6,6 +6,20 @@ const app = new Hono()
 const PORT = 8787
 const firstStart = Date.now()
 
+// app.use('*', async (c, next) => {
+//     const url = c.req.url
+//     const userAgent = c.req.header('User-Agent') || 'Unknown'
+//     const startTime = Date.now()
+    
+//     await next()
+    
+//     const endTime = Date.now()
+//     const duration = endTime - startTime
+//     const status = c.res.status
+    
+//     console.log(`[${new Date().toISOString()}] ${c.req.method} ${url} ${status} ${duration}ms - User-Agent: ${userAgent}`)
+// })
+
 app.get('/', () => {
     return new Response(JSON.stringify({
         message: "fxTikTok offload server is running!",

@@ -11,14 +11,20 @@ export default function generateAlternate(c: Context): {
 } {
   const { unique_id, nickname, description } = c.req.query()
   const showSponsor = Math.random() < 0.1 // 1 in 10 chance to show sponsor message, gotta break even somehow
+  let decodedDescription = "";
 
-  const decodedDescription = description
-    ? decodeURIComponent(
-        new TextDecoder('utf-8').decode(
-          Uint8Array.from(atob(decodeURIComponent(description)), (c) => c.charCodeAt(0))
+  try {
+    decodedDescription = description
+      ? decodeURIComponent(
+          new TextDecoder('utf-8').decode(
+            Uint8Array.from(atob(decodeURIComponent(description)), (c) => c.charCodeAt(0))
+          )
         )
-      )
-    : ''
+      : ''
+  } catch {
+    console.error('Error decoding description:', description)
+    decodedDescription = 'Unable to decode description'
+  }
 
   // Some Discord embed values are limited to 256 characters, truncate if necessary
   // See more: https://www.pythondiscord.com/pages/guides/python-guides/discord-embed-limits/
