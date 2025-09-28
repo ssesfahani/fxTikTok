@@ -28,13 +28,21 @@ export default function MetaHelper(
       <head>
         {tags.map((tag) => (tag.content ? <meta property={tag.name} content={tag.content} /> : null))}
         {alternate ? <link rel='alternate' href={alternateUrl.toString()} type='application/json+oembed' /> : null}
-        {awemeId ? <link
-          rel='alternate'
-          type='application/activity+json'
-          href={
-            (OFF_LOAD || 'https://offload.tnktok.com') + '/users/' + 'username' + '/statuses/' + awemeId + (hq ? 'hq' : '') + (addDesc ? 'desc' : '')
-          }
-        /> : null}
+        {awemeId ? (
+          <link
+            rel='alternate'
+            type='application/activity+json'
+            href={
+              (OFF_LOAD || 'https://offload.tnktok.com') +
+              '/users/' +
+              'username' +
+              '/statuses/' +
+              awemeId +
+              (hq ? 'hq' : '') +
+              (addDesc ? 'desc' : '')
+            }
+          />
+        ) : null}
       </head>
     </html>
   )
