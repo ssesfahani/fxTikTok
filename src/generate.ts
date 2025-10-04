@@ -49,12 +49,12 @@ generate.get('/video/:videoId', async (c) => {
       })
     }
 
-    const highAvailable = data.video.bitrateInfo.find((bitrate) => bitrate.CodecType.includes('h265'))
+    const highQualityVideo = data.video.bitrateInfo.find((bitrate) => bitrate.CodecType.includes('h265'))
 
-    if (hq && highAvailable) {
-      return c.redirect(`https://tikwm.com/video/media/hdplay/${videoId}.mp4`)
+    if (hq && highQualityVideo) {
+      return c.redirect(highQualityVideo.PlayAddr.UrlList.find(url => new URL(url).pathname === '/aweme/v1/play/'))
     } else {
-      return c.redirect(`https://tikwm.com/video/media/play/${videoId}.mp4`)
+      return c.redirect(data.video.PlayAddrStruct.UrlList.find(url => new URL(url).pathname === '/aweme/v1/play/'))
     }
   } catch (e) {
     return new Response((e as Error).message, {
