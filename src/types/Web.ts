@@ -2931,6 +2931,7 @@ export interface Video {
   zoomCover: ZoomCover
   volumeInfo: VolumeInfo
   bitrateInfo: BitrateInfo[]
+  PlayAddrStruct: PlayAddr
   VQScore: string
 }
 

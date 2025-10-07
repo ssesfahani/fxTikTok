@@ -18,7 +18,7 @@ export default async function generateActivity(param: string, c: Context) {
     }
 
   let media = []
-  let desc = videoInfo.desc + '<br><br>'
+  let desc = (videoInfo.desc + '<br><br>').replace(/@(\w+)/g, '<a href="https://tiktok.com/@$1">@$1</a>')
 
   if (videoInfo.video.playAddr) {
     media.push({
@@ -42,7 +42,10 @@ export default async function generateActivity(param: string, c: Context) {
   }
 
   if (videoInfo.imagePost && videoInfo.imagePost.images.length > 0) {
-    for (let i = 0; i < videoInfo.imagePost.images.length; i++) {
+    const maxImages = 4
+    const imageCount = Math.min(videoInfo.imagePost.images.length, maxImages)
+
+    for (let i = 0; i < imageCount; i++) {
       media.push({
         id: videoId + '-image-' + i,
         type: 'image',
@@ -51,7 +54,11 @@ export default async function generateActivity(param: string, c: Context) {
         remote_url: null,
         preview_remote_url: null,
         text_url: null,
-        description: 'Image (' + (i + 1) + ' of ' + videoInfo.imagePost.images.length + ')',
+        ...(videoInfo.imagePost.images.length > 4
+          ? {
+              description: 'Image (' + (i + 1) + ' of ' + videoInfo.imagePost.images.length + ')'
+            }
+          : {}),
         meta: {
           original: {
             width: videoInfo.imagePost.images[i].imageWidth,

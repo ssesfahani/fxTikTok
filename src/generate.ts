@@ -37,7 +37,7 @@ generate.get('/video/:videoId', async (c) => {
   const hq = c.req.query('hq') === 'true' || c.req.query('quality') === 'hq'
 
   try {
-    // To ensure the video is valid, decrease load on TikWM by checking the video data first
+    // Ensure the video is valid
     const data = await scrapeVideoData(videoId)
 
     if (data instanceof Error) {
@@ -49,13 +49,18 @@ generate.get('/video/:videoId', async (c) => {
       })
     }
 
-    const highAvailable = data.video.bitrateInfo.find((bitrate) => bitrate.CodecType.includes('h265'))
+    const h265Video = data.video.bitrateInfo.find((b) => b.CodecType.includes('h265'))
+    const h265VideoPlayUrl = h265Video?.PlayAddr?.UrlList?.find((u: string) => u.includes('/aweme/v1/play/'))
 
-    if (hq && highAvailable) {
-      return c.redirect(`https://tikwm.com/video/media/hdplay/${videoId}.mp4`)
+    const videoPlayUrl = data.video?.PlayAddrStruct?.UrlList?.find((u: string) => u.includes('/aweme/v1/play/'))
+
+    if (hq && h265VideoPlayUrl) {
+      return c.redirect(h265VideoPlayUrl)
+    } else if (videoPlayUrl) {
+      return c.redirect(videoPlayUrl)
     } else {
-      return c.redirect(`https://tikwm.com/video/media/play/${videoId}.mp4`)
-    }
+      throw new Error('Could not find an aweme play URL')
+	}
   } catch (e) {
     return new Response((e as Error).message, {
       status: 500,
